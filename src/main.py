@@ -13,6 +13,7 @@ from src.funds_user.router import router as router_funds_user
 from src.funds_editor.router import router as router_funds_editor
 from src.QnA_user.router import router as router_qna_user
 from src.QnA_editor.router import router as router_qna_editor
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
@@ -21,7 +22,13 @@ client = weaviate.Client(
     url="http://10.90.137.169:8080"
 )
 
-client.schema.delete_all()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to your needs
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if not client.schema.exists("Article"):
     client.schema.create_class(class_article)

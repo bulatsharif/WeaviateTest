@@ -21,6 +21,7 @@ client = weaviate.Client(
     url="http://10.90.137.169:8080"
 )
 
+client.schema.delete_all()
 
 if not client.schema.exists("Article"):
     client.schema.create_class(class_article)

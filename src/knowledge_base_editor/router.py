@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 client = weaviate.Client(
-    url="http://localhost:8080"
+    url="http://10.90.137.169:8080"
 )
 
 

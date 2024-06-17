@@ -18,7 +18,7 @@ from src.QnA_editor.router import router as router_qna_editor
 app = FastAPI()
 
 client = weaviate.Client(
-    url="http://weaviate:8080"
+    url="http://localhost:8080"
 )
 
 

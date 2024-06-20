@@ -1,18 +1,14 @@
-import json
-from typing import List, Dict
-import re
 from fastapi import FastAPI
 import weaviate
 
-from src.models import ArticleAdd, ArticleGet
 from src.schemas import class_article, class_fund
-from src.knowledge_base_user.router import router as router_user
-from src.knowledge_base_editor.router import router as router_editor
+from src.knowledge_base.knowledge_base_user.router import router as router_user
+from src.knowledge_base.knowledge_base_editor.router import router as router_editor
 from src.calculator.router import router as router_calculator
-from src.funds_user.router import router as router_funds_user
-from src.funds_editor.router import router as router_funds_editor
-from src.QnA_user.router import router as router_qna_user
-from src.QnA_editor.router import router as router_qna_editor
+from src.funds.funds_user.router import router as router_funds_user
+from src.funds.funds_editor.router import router as router_funds_editor
+from src.QnA.QnA_user.router import router as router_qna_user
+from src.QnA.QnA_editor.router import router as router_qna_editor
 from fastapi.middleware.cors import CORSMiddleware
 
 

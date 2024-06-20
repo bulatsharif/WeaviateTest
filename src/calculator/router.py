@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
-from src.calculator.nisab_api_client import fetch_silver_value
-from src.calculator.nisab_on_livestock_calculation import calculate_goats, calculate_sheep, calculate_buffaloes, \
+from src.calculator.utility.nisab_api_client import fetch_silver_value
+from src.calculator.utility.nisab_on_livestock_calculation import calculate_goats, calculate_sheep, calculate_buffaloes, \
     calculate_cows, calculate_camels, calculate_horses
 from src.calculator.schemas import ZakatOnProperty, \
     ZakatOnLivestock, ZakatUshrResponse, ZakatUshrRequest, ZakatUshrItem, NisabValue, ZakatOnPropertyCalculated, \
@@ -49,31 +49,22 @@ async def calculate_zakat_on_livestock(livestock: ZakatOnLivestock):
 
     if livestock.camels and livestock.camels >= 5:
         calculated_animals_list += calculate_camels(livestock.camels)
-        print(calculated_animals_list)
         calculated_livestock.nisab_status = True
 
     if livestock.cows and livestock.cows >= 30:
         calculated_animals_list += calculate_cows(livestock.cows)
-        print(calculated_animals_list)
-
         calculated_livestock.nisab_status = True
 
     if livestock.buffaloes and livestock.buffaloes >= 30:
         calculated_animals_list += calculate_buffaloes(livestock.buffaloes)
-        print(calculated_animals_list)
-
         calculated_livestock.nisab_status = True \
 
     if livestock.sheep and livestock.sheep >= 40:
         calculated_animals_list += calculate_sheep(livestock.sheep)
-        print(calculated_animals_list)
-
         calculated_livestock.nisab_status = True
 
     if livestock.goats and livestock.goats >= 40:
         calculated_animals_list += calculate_goats(livestock.goats)
-        print(calculated_animals_list)
-
         calculated_livestock.nisab_status = True
 
     if livestock.horses_value:

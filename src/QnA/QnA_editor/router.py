@@ -3,7 +3,7 @@ from typing import List, Dict
 import weaviate
 from fastapi import APIRouter
 
-from src.models import QuestionGet, QuestionAdd
+from src.QnA.models import QuestionGet, QuestionAdd
 
 router = APIRouter(
     prefix="/qna/edit",

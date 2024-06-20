@@ -3,7 +3,7 @@ from typing import List, Dict
 import weaviate
 from fastapi import APIRouter
 
-from src.models import ArticleGet, ArticleAdd
+from src.knowledge_base.models import ArticleGet, ArticleAdd
 
 router = APIRouter(
     prefix="/knowledge-base/edit",

@@ -14,50 +14,73 @@ router = APIRouter(
 
 @router.post("/zakat-property", response_model=ZakatOnPropertyCalculated)
 async def calculate_zakat_on_property(property: ZakatOnProperty):
-    zakat_value = (
+    savings_value = (
         (
             property.cash + property.cash_on_bank_cards + property.silver_jewelry + property.gold_jewelry
             + property.purchased_product_for_resaling + property.unfinished_product + property.produced_product_for_resaling
             + property.purchased_not_for_resaling + property.used_after_nisab + property.rent_money + property.stocks_for_resaling
             + property.income_from_stocks - property.taxes_value
-        ) * 0.025
+        )
     )
+    zakat_value = savings_value * 0.025
     if zakat_value == 0:
         raise HTTPException(status_code=400, detail="No assets were added")
-    calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value)
+    silver_price = await fetch_silver_value('RUB')
+    nisab_value = int(silver_price * 612.35)
+    if savings_value > nisab_value:
+        nisab_value_bool = True
+    else:
+        nisab_value_bool = False
+    calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value, nisab_value=nisab_value_bool)
     return calculated_value
 
 
 @router.post("/zakat-livestock", response_model=ZakatOnLiveStockResponse)
 async def calculate_zakat_on_livestock(livestock: ZakatOnLivestock):
-    calculated_livestock = ZakatOnLiveStockResponse()
-
     calculated_animals_list = []
+
+
+    calculated_livestock = ZakatOnLiveStockResponse(
+        animals=calculated_animals_list,
+        value_for_horses=0,
+        nisab_status=False
+    )
+
 
     if livestock.camels and livestock.camels >= 5:
         calculated_animals_list += calculate_camels(livestock.camels)
+        print(calculated_animals_list)
         calculated_livestock.nisab_status = True
 
     if livestock.cows and livestock.cows >= 30:
         calculated_animals_list += calculate_cows(livestock.cows)
+        print(calculated_animals_list)
+
         calculated_livestock.nisab_status = True
 
     if livestock.buffaloes and livestock.buffaloes >= 30:
         calculated_animals_list += calculate_buffaloes(livestock.buffaloes)
+        print(calculated_animals_list)
+
         calculated_livestock.nisab_status = True \
 
     if livestock.sheep and livestock.sheep >= 40:
         calculated_animals_list += calculate_sheep(livestock.sheep)
+        print(calculated_animals_list)
+
         calculated_livestock.nisab_status = True
 
     if livestock.goats and livestock.goats >= 40:
         calculated_animals_list += calculate_goats(livestock.goats)
+        print(calculated_animals_list)
+
         calculated_livestock.nisab_status = True
 
-    if livestock.horses:
+    if livestock.horses_value:
         calculated_livestock.value_for_horses = int(calculate_horses(livestock.horses_value) * 0.025)
         if livestock.horses_value > 0:
             calculated_livestock.nisab_status = True
+
 
     calculated_livestock.animals = calculated_animals_list
     return calculated_livestock

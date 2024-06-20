@@ -1,7 +1,9 @@
+from typing import List
+
 from src.calculator.schemas import Animal
 
 
-def calculate_camels(camels: int) -> list[Animal]:
+def calculate_camels(camels: int) -> List[Animal]:
     calculated_animals = []
     if camels > 5 and camels <= 9:
         calculated_animals.append(Animal(type="Sheep", quantity=1, age=1))
@@ -43,6 +45,8 @@ def calculate_camels(camels: int) -> list[Animal]:
     elif camels > 154 and camels <= 159:
         calculated_animals.append(Animal(type="Camel", quantity=3, age=4))
         calculated_animals.append(Animal(type="Sheep", quantity=1))
+    else:
+        calculated_animals.append(Animal(type="Camels", quantity=6, age=1))
     return calculated_animals
 
 

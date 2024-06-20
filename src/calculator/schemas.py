@@ -18,7 +18,6 @@ class ZakatOnProperty(BaseModel):
     stocks_for_resaling: Optional[int]
     income_from_stocks: Optional[int]
     taxes_value: Optional[int]
-    nisab_value: int
 
     class Config:
         orm_mode = True
@@ -26,6 +25,7 @@ class ZakatOnProperty(BaseModel):
 
 class ZakatOnPropertyCalculated(BaseModel):
     zakat_value: float
+    nisab_value: bool
     currency: Optional[str] = "RUB"
 
 
@@ -42,7 +42,7 @@ class ZakatOnLivestock(BaseModel):
 class Animal(BaseModel):
     type: str
     quantity: int
-    age: Optional[int]
+    age: Optional[int] = 0
 
 
 class ZakatOnLiveStockResponse(BaseModel):

@@ -1,76 +1,81 @@
 from fastapi import APIRouter, HTTPException
 
-from src.calculator.schemas import ZakatOnProperyCalculated, ZakatOnProperty, ZakatOnLivestockResponse, \
-    ZakatOnLivestock, ZakatUshrResponse, ZakatUshrRequest, ZakatUshrItem, NisabValue
+from src.calculator.nisab_api_client import fetch_silver_value
+from src.calculator.nisab_on_livestock_calculation import calculate_goats, calculate_sheep, calculate_buffaloes, \
+    calculate_cows, calculate_camels, calculate_horses
+from src.calculator.schemas import ZakatOnProperty, \
+    ZakatOnLivestock, ZakatUshrResponse, ZakatUshrRequest, ZakatUshrItem, NisabValue, ZakatOnPropertyCalculated, \
+    ZakatOnLiveStockResponse
 
 router = APIRouter(
     prefix="/calculator",
     tags=["Zakat Calculator"]
 )
 
-@router.post("/zakat-property", response_model=ZakatOnProperyCalculated)
+@router.post("/zakat-property", response_model=ZakatOnPropertyCalculated)
 async def calculate_zakat_on_property(property: ZakatOnProperty):
     zakat_value = (
         (
             property.cash + property.cash_on_bank_cards + property.silver_jewelry + property.gold_jewelry
             + property.purchased_product_for_resaling + property.unfinished_product + property.produced_product_for_resaling
             + property.purchased_not_for_resaling + property.used_after_nisab + property.rent_money + property.stocks_for_resaling
-            + property.income_from_stocks
+            + property.income_from_stocks - property.taxes_value
         ) * 0.025
     )
     if zakat_value == 0:
         raise HTTPException(status_code=400, detail="No assets were added")
-    calculated_value = ZakatOnProperyCalculated(zakat_value=zakat_value)
+    calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value)
     return calculated_value
 
 
-
-
-@router.post("/zakat-livestock", response_model=ZakatOnLivestockResponse)
+@router.post("/zakat-livestock", response_model=ZakatOnLiveStockResponse)
 async def calculate_zakat_on_livestock(livestock: ZakatOnLivestock):
-    calculated_livestock = ZakatOnLivestockResponse(
-        camels=0,
-        cows=0,
-        buffaloes=0,
-        sheep=0,
-        goats=0,
-        horses=0,
-        nisab_status=False
-    )
-    if livestock.camels and livestock.camels > 5:
-        calculated_livestock.camels = 1
+    calculated_livestock = ZakatOnLiveStockResponse()
+
+    calculated_animals_list = []
+
+    if livestock.camels and livestock.camels >= 5:
+        calculated_animals_list += calculate_camels(livestock.camels)
         calculated_livestock.nisab_status = True
-    if livestock.cows and livestock.cows > 30:
-        calculated_livestock.cows = 1
+
+    if livestock.cows and livestock.cows >= 30:
+        calculated_animals_list += calculate_cows(livestock.cows)
         calculated_livestock.nisab_status = True
-    if livestock.buffaloes and livestock.buffaloes > 30:
-        calculated_livestock.buffaloes = 1
+
+    if livestock.buffaloes and livestock.buffaloes >= 30:
+        calculated_animals_list += calculate_buffaloes(livestock.buffaloes)
+        calculated_livestock.nisab_status = True \
+
+    if livestock.sheep and livestock.sheep >= 40:
+        calculated_animals_list += calculate_sheep(livestock.sheep)
         calculated_livestock.nisab_status = True
-    if livestock.sheep and livestock.sheep > 40:
-        calculated_livestock.sheep = 1
+
+    if livestock.goats and livestock.goats >= 40:
+        calculated_animals_list += calculate_goats(livestock.goats)
         calculated_livestock.nisab_status = True
-    if livestock.goats and livestock.goats > 40:
-        calculated_livestock.goats = 1
-        calculated_livestock.nisab_status = True
+
     if livestock.horses:
-        calculated_livestock.horses = int(livestock.horses * 0.025)
-        if livestock.horses > 0:
+        calculated_livestock.value_for_horses = int(calculate_horses(livestock.horses_value) * 0.025)
+        if livestock.horses_value > 0:
             calculated_livestock.nisab_status = True
+
+    calculated_livestock.animals = calculated_animals_list
     return calculated_livestock
 
 
 @router.post("/zakat-ushr", response_model=ZakatUshrResponse)
 async def calculate_zakat_ushr(request : ZakatUshrRequest):
     zakat_ushr_value = []
+    zakat_rate = 0
+    if not request.is_ushr_land:
+        zakat_rate = 0
+    elif request.is_irrigated:
+        zakat_rate = 0.10
+    else:
+        zakat_rate = 0.05
+
 
     for crop in request.crops:
-        if not crop.is_ushr_land:
-            zakat_rate = 0
-        elif crop.is_irrigated:
-            zakat_rate = 0.05
-        else:
-            zakat_rate = 0.10
-
         zakat_type_value = crop.quantity * zakat_rate
         zakat_ushr_value.append(ZakatUshrItem(type=crop.type, quantity=zakat_type_value))
 
@@ -80,5 +85,6 @@ async def calculate_zakat_ushr(request : ZakatUshrRequest):
 
 @router.get("/nisab-value", response_model=NisabValue)
 async def get_nisab_value():
-    nisab_value = NisabValue(nisab_value=36741)
+    silver_price = await fetch_silver_value('RUB')
+    nisab_value = NisabValue(nisab_value=int(silver_price * 612.35), currency='RUB')
     return nisab_value

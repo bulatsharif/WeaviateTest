@@ -17,12 +17,14 @@ class ZakatOnProperty(BaseModel):
     rent_money: Optional[int]
     stocks_for_resaling: Optional[int]
     income_from_stocks: Optional[int]
+    taxes_value: Optional[int]
+    nisab_value: int
 
     class Config:
         orm_mode = True
 
 
-class ZakatOnProperyCalculated(BaseModel):
+class ZakatOnPropertyCalculated(BaseModel):
     zakat_value: float
     currency: Optional[str] = "RUB"
 
@@ -34,18 +36,19 @@ class ZakatOnLivestock(BaseModel):
     buffaloes: Optional[int]
     sheep: Optional[int]
     goats: Optional[int]
-    horses: Optional[int]
+    horses_value: Optional[int]
 
 
-class ZakatOnLivestockResponse(BaseModel):
-    camels: Optional[int]
-    cows: Optional[int]
-    buffaloes: Optional[int]
-    sheep: Optional[int]
-    goats: Optional[int]
-    horses: Optional[float]
+class Animal(BaseModel):
+    type: str
+    quantity: int
+    age: Optional[int]
+
+
+class ZakatOnLiveStockResponse(BaseModel):
+    animals: List[Animal]
+    value_for_horses: int
     nisab_status: bool
-    currency: Optional[str] = "RUB"
 
 
 # Schemas for Zakat Ushr
@@ -53,12 +56,12 @@ class ZakatOnLivestockResponse(BaseModel):
 class Crop(BaseModel):
     type: str
     quantity: int
-    is_ushr_land: bool
-    is_irrigated: bool
 
 
 class ZakatUshrRequest(BaseModel):
     crops: List[Crop]
+    is_ushr_land: bool
+    is_irrigated: bool
 
 
 class ZakatUshrItem(BaseModel):
@@ -68,6 +71,7 @@ class ZakatUshrItem(BaseModel):
 
 class ZakatUshrResponse(BaseModel):
     zakat_ushr_value: List[ZakatUshrItem]
+
 
 class NisabValue(BaseModel):
     nisab_value: int

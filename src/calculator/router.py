@@ -32,6 +32,7 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
     else:
         nisab_value_bool = False
     calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value, nisab_value=nisab_value_bool)
+    calculated_value.currency = property.currency
     return calculated_value
 
 

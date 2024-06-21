@@ -16,11 +16,10 @@ services:
     volumes:
       - weaviate_data:/var/lib/weaviate
     restart: on-failure
-    depends_on:
-      contextionary:
-        condition: service_healthy
-      qna-transformers:
-        condition: service_healthy
+    networks:
+      weaviate-net:
+        aliases:
+          - weaviate
     environment:
       CONTEXTIONARY_URL: contextionary:9999
       QNA_INFERENCE_API: 'http://qna-transformers:8080'
@@ -45,6 +44,11 @@ services:
       ENABLE_COMPOUND_SPLITTING: 'false'
     ports:
       - "9999:9999"
+    depends_on:
+      weaviate:
+        condition: service_healthy
+    networks:
+      weaviate-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999/.well-known/ready"]
       interval: 10s
@@ -62,16 +66,27 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    networks:
+      weaviate-net
 
   qna-transformers:
     image: semitechnologies/qna-transformers:distilbert-base-uncased-distilled-squad
     environment:
       ENABLE_CUDA: '0'
+    depends_on:
+      weaviate:
+        condition: service_healthy
+    networks:
+      weaviate-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/.well-known/ready"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+networks:
+  weaviate-net:
+    driver: bridge
 
 volumes:
   weaviate_data:

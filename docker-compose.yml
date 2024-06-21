@@ -13,6 +13,7 @@ services:
     ports:
       - 8080:8080
       - 50051:50051
+      - 11434:11434
     volumes:
       - weaviate_data:/var/lib/weaviate
     restart: on-failure

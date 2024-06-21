@@ -67,7 +67,7 @@ async def calculate_zakat_on_livestock(livestock: ZakatOnLivestock):
         calculated_animals_list += calculate_goats(livestock.goats)
         calculated_livestock.nisab_status = True
 
-    if livestock.horses_value:
+    if livestock.horses_value and livestock.isFemale_horses and livestock.isForSale_horses:
         calculated_livestock.value_for_horses = int(calculate_horses(livestock.horses_value) * 0.025)
         if livestock.horses_value > 0:
             calculated_livestock.nisab_status = True

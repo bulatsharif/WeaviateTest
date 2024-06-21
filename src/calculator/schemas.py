@@ -18,6 +18,7 @@ class ZakatOnProperty(BaseModel):
     stocks_for_resaling: Optional[int]
     income_from_stocks: Optional[int]
     taxes_value: Optional[int]
+    nisab_value: Optional[int]
 
     class Config:
         orm_mode = True
@@ -37,6 +38,8 @@ class ZakatOnLivestock(BaseModel):
     sheep: Optional[int]
     goats: Optional[int]
     horses_value: Optional[int]
+    isFemale_horses: Optional[bool]
+    isForSale_horses: Optional[bool]
 
 
 class Animal(BaseModel):

@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 client = weaviate.Client(
-    url="http://10.90.137.169:8080"
+    url="http://weaviate:8080"
 )
 
 app.add_middleware(

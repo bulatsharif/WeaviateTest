@@ -16,7 +16,7 @@ client = weaviate.Client(
     url="http://10.90.137.169:8080"
 )
 
-ollama_cl = ollama_client(host='http://localhost:11434')
+ollama_cl = ollama_client(host='http://host.docker.internal:11434')
 
 @router.post("/create-article/", response_model=ArticleGet)
 async def create_article(article: ArticleAdd):

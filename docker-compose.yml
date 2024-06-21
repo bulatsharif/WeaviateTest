@@ -17,9 +17,7 @@ services:
       - weaviate_data:/var/lib/weaviate
     restart: on-failure
     networks:
-      weaviate-net:
-        aliases:
-          - weaviate
+      - weaviate-net
     environment:
       CONTEXTIONARY_URL: contextionary:9999
       QNA_INFERENCE_API: 'http://qna-transformers:8080'
@@ -48,7 +46,7 @@ services:
       weaviate:
         condition: service_healthy
     networks:
-      weaviate-net
+      - weaviate-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999/.well-known/ready"]
       interval: 10s
@@ -67,7 +65,7 @@ services:
     volumes:
       - .:/app
     networks:
-      weaviate-net
+      - weaviate-net
 
   qna-transformers:
     image: semitechnologies/qna-transformers:distilbert-base-uncased-distilled-squad
@@ -77,7 +75,7 @@ services:
       weaviate:
         condition: service_healthy
     networks:
-      weaviate-net
+      - weaviate-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/.well-known/ready"]
       interval: 10s

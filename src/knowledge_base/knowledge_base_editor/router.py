@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import ollama
 import weaviate
 from fastapi import APIRouter
 
@@ -23,9 +24,12 @@ async def create_article(article: ArticleAdd):
         "text": article.text
     }
 
+    response = ollama.embeddings(model="snowflake-arctic-embed", prompt=article_object)
+
     result = client.data_object.create(
         data_object=article_object,
-        class_name="Article"
+        class_name="Article",
+        vector=response["embedding"]
     )
 
     object_id = result

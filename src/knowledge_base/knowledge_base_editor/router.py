@@ -1,6 +1,7 @@
 from typing import List, Dict
 
 import ollama
+from ollama import Client as ollama_client
 import weaviate
 from fastapi import APIRouter
 
@@ -15,6 +16,7 @@ client = weaviate.Client(
     url="http://10.90.137.169:8080"
 )
 
+ollama_cl = ollama_client(host='http://localhost:11434')
 
 @router.post("/create-article/", response_model=ArticleGet)
 async def create_article(article: ArticleAdd):
@@ -24,7 +26,7 @@ async def create_article(article: ArticleAdd):
         "text": article.text
     }
 
-    response = ollama.embeddings(model="snowflake-arctic-embed", prompt=article_object)
+    response = ollama_cl.embeddings(model="snowflake-arctic-embed", prompt=article_object)
 
     result = client.data_object.create(
         data_object=article_object,

@@ -19,6 +19,7 @@ class ZakatOnProperty(BaseModel):
     income_from_stocks: Optional[int]
     taxes_value: Optional[int]
     nisab_value: Optional[int]
+    currency: str = "RUB"
 
     class Config:
         orm_mode = True
@@ -40,6 +41,7 @@ class ZakatOnLivestock(BaseModel):
     horses_value: Optional[int]
     isFemale_horses: Optional[bool]
     isForSale_horses: Optional[bool]
+    currency: Optional[str] = "RUB"
 
 
 class Animal(BaseModel):

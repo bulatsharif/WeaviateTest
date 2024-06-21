@@ -17,21 +17,14 @@ services:
       - weaviate_data:/var/lib/weaviate
     restart: on-failure
     environment:
-      QNA_INFERENCE_API: 'http://qna-transformers:8080'
       QUERY_DEFAULTS_LIMIT: 25
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
       DEFAULT_VECTORIZER_MODULE: 'text2vec-ollama'
-      ENABLE_MODULES: 'text2vec-ollama,qna-transformers,generative-ollama'
+      ENABLE_MODULES: 'text2vec-ollama,generative-ollama'
       CLUSTER_HOSTNAME: 'node1'
     depends_on:
-      - qna-transformers
       - ollama
 
-  qna-transformers:
-    image: cr.weaviate.io/semitechnologies/qna-transformers:distilbert-base-uncased-distilled-squad
-    environment:
-      ENABLE_CUDA: '0'
-    restart: on-failure
 
   ollama:
     image: ollama/ollama

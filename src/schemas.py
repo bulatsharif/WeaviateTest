@@ -17,7 +17,7 @@ class_article = {
     "vectorizer": "text2vec-ollama",
     "moduleConfig": {
         "text2vec-ollama": {
-            "apiEndpoint": "http://host.docker.internal:11434",
+            "apiEndpoint": "http://ollama:11434",
             "model": "snowflake-arctic-embed"
         }
     },
@@ -38,7 +38,7 @@ class_fund = {
     "vectorizer": "text2vec-ollama",
     "moduleConfig": {
         "text2vec-ollama": {
-            "apiEndpoint": "http://host.docker.internal:11434",
+            "apiEndpoint": "http://ollama:11434",
             "model": "snowflake-arctic-embed"
         }
     },
@@ -64,7 +64,7 @@ class_question = {
     "vectorizer": "text2vec-ollama",
     "moduleConfig": {
         "text2vec-ollama": {
-            "apiEndpoint": "http://host.docker.internal:11434",
+            "apiEndpoint": "http://ollama:11434",
             "model": "snowflake-arctic-embed"
         }
     },

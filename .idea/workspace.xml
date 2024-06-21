@@ -93,7 +93,7 @@
       <workItem from="1718957211174" duration="339000" />
       <workItem from="1718957837337" duration="722000" />
       <workItem from="1718958787509" duration="10172000" />
-      <workItem from="1719002461928" duration="2910000" />
+      <workItem from="1719002461928" duration="3279000" />
     </task>
     <task id="LOCAL-00001" summary="Main py changed to localhost">
       <option name="closed" value="true" />
@@ -319,7 +319,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719005450459</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Added IP Weaviate">
+      <option name="closed" value="true" />
+      <created>1719005591992</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1719005591992</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -14,6 +14,13 @@ class_article = {
           "dataType" : ["text"]
         },
     ],
+    "vectorizer": "text2vec-ollama",
+    "moduleConfig": {
+        "text2vec-ollama": {
+            "apiEndpoint": "http://host.docker.internal:11434",
+            "model": "snowflake-arctic-embed"
+        }
+    },
 }
 
 class_fund = {
@@ -28,6 +35,13 @@ class_fund = {
           "dataType" : ["text"]
         },
     ],
+    "vectorizer": "text2vec-ollama",
+    "moduleConfig": {
+        "text2vec-ollama": {
+            "apiEndpoint": "http://host.docker.internal:11434",
+            "model": "snowflake-arctic-embed"
+        }
+    },
 }
 
 
@@ -47,4 +61,11 @@ class_question = {
           "dataType" : ["text[]"]
         },
     ],
+    "vectorizer": "text2vec-ollama",
+    "moduleConfig": {
+        "text2vec-ollama": {
+            "apiEndpoint": "http://host.docker.internal:11434",
+            "model": "snowflake-arctic-embed"
+        }
+    },
 }

@@ -24,6 +24,8 @@ services:
       CLUSTER_HOSTNAME: 'node1'
     depends_on:
       - ollama
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 
   ollama:
@@ -42,8 +44,7 @@ services:
     volumes:
       - .:/app
 
-  extra_hosts:
-    - "host.docker.internal:host-gateway"
+
 
 volumes:
   weaviate_data:

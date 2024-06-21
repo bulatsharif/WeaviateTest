@@ -25,13 +25,14 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
     zakat_value = savings_value * 0.025
     if zakat_value == 0:
         raise HTTPException(status_code=400, detail="No assets were added")
-    silver_price = await fetch_silver_value('RUB')
+    silver_price = await fetch_silver_value(property.currency)
     nisab_value = int(silver_price * 612.35)
     if savings_value > nisab_value:
         nisab_value_bool = True
     else:
         nisab_value_bool = False
     calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value, nisab_value=nisab_value_bool)
+    calculated_value.currency = property.currency
     return calculated_value
 
 
@@ -68,7 +69,7 @@ async def calculate_zakat_on_livestock(livestock: ZakatOnLivestock):
         calculated_livestock.nisab_status = True
 
     if livestock.horses_value and livestock.isFemale_horses and livestock.isForSale_horses:
-        calculated_livestock.value_for_horses = int(calculate_horses(livestock.horses_value) * 0.025)
+        calculated_livestock.value_for_horses = int(calculate_horses(livestock.horses_value))
         if livestock.horses_value > 0:
             calculated_livestock.nisab_status = True
 

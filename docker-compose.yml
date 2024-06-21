@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 services:
   weaviate:
@@ -16,6 +16,9 @@ services:
     volumes:
       - weaviate_data:/var/lib/weaviate
     restart: on-failure
+    depends_on:
+      - contextionary
+      - qna-transformers
     environment:
       CONTEXTIONARY_URL: contextionary:9999
       QNA_INFERENCE_API: 'http://qna-transformers:8080'

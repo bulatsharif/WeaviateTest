@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added IP Weaviate" />
+    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added IP Weaviate">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/QnA/QnA_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/QnA/QnA_editor/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/QnA/QnA_user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/QnA/QnA_user/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/funds/funds_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/funds/funds_editor/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/funds/funds_user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/funds/funds_user/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_user/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,19 +60,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "FastAPI.WeaviateTest.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;FastAPI.WeaviateTest.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\darkb\PycharmProjects\WeaviateTest\src" />
@@ -92,6 +102,7 @@
       <workItem from="1718957837337" duration="722000" />
       <workItem from="1718958787509" duration="10172000" />
       <workItem from="1719002461928" duration="3774000" />
+      <workItem from="1719035317095" duration="3198000" />
     </task>
     <task id="LOCAL-00001" summary="Main py changed to localhost">
       <option name="closed" value="true" />
@@ -341,7 +352,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719006376073</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Added IP Weaviate">
+      <option name="closed" value="true" />
+      <created>1719035577325</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1719035577325</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Added IP Weaviate">
+      <option name="closed" value="true" />
+      <created>1719035709015</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1719035709015</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

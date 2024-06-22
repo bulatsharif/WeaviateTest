@@ -11,7 +11,10 @@ router = APIRouter(
 )
 
 client = weaviate.Client(
-    url="http://10.90.137.169:8080"
+    url="http://weaviate:8080",
+    additional_headers={
+        "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr"
+    }
 )
 
 

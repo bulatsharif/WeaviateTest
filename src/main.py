@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import weaviate
 
-from src.schemas import class_article, class_fund
+from src.schemas import class_article, class_fund, class_question
 from src.knowledge_base.knowledge_base_user.router import router as router_user
 from src.knowledge_base.knowledge_base_editor.router import router as router_editor
 from src.calculator.router import router as router_calculator
@@ -15,7 +15,10 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 client = weaviate.Client(
-    url="http://10.90.137.169:8080"
+    url="http://weaviate:8080",
+    additional_headers = {
+        "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr"
+    }
 )
 
 app.add_middleware(
@@ -26,11 +29,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+client.schema.delete_all()
+
 if not client.schema.exists("Article"):
     client.schema.create_class(class_article)
 
 if not client.schema.exists("Fund"):
     client.schema.create_class(class_fund)
+
+if not client.schema.exists("Question"):
+    client.schema.create_class(class_question)
 
 app.include_router(router_user)
 app.include_router(router_editor)

@@ -14,3 +14,7 @@ class ArticleGet(BaseModel):
     tags: List[str]
     title: str
     text: str
+
+class Question(BaseModel):
+    question: str
+

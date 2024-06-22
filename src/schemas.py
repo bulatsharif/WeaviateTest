@@ -14,6 +14,11 @@ class_article = {
           "dataType" : ["text"]
         },
     ],
+    "moduleConfig": {
+        "generative-mistral": {
+            "model": "mistral-medium-latest",
+        },
+    }
 }
 
 class_fund = {
@@ -28,6 +33,11 @@ class_fund = {
           "dataType" : ["text"]
         },
     ],
+    "moduleConfig": {
+        "generative-mistral": {
+            "model": "mistral-medium-latest",
+        },
+    }
 }
 
 
@@ -47,4 +57,9 @@ class_question = {
           "dataType" : ["text[]"]
         },
     ],
+    "moduleConfig": {
+        "generative-mistral": {
+            "model": "mistral-medium-latest",
+        },
+    }
 }

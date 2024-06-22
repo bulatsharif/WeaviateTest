@@ -1,9 +1,10 @@
+import json
 from typing import List, Dict
 
 import weaviate
 from fastapi import APIRouter
 
-from src.knowledge_base.models import ArticleGet
+from src.knowledge_base.models import ArticleGet, Question
 
 router = APIRouter(
     prefix="/knowledge-base",
@@ -12,10 +13,12 @@ router = APIRouter(
 
 client = weaviate.Client(
     url="http://weaviate:8080",
-    additional_headers={
-        "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr"
+    additional_headers = {
+        "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr",
+        "X-Mistral-Api-Key": "RVBRn5Sn26ONsd0CbFBjYWJYR9w416kd"
     }
 )
+
 
 
 
@@ -98,19 +101,36 @@ async def search_article(text: str):
 
 
 @router.post("/ask-question/")
-async def ask_question(question: str):
+async def ask_question(question: Question):
 
-    print(question)
+    prompt = question.question + "? Use the title and text from the articles: {title} and {text}"
 
-    ask = {
-        "question": question,
-        "properties": ["text"]
-    }
     response = (
         client.query
-        .get("Article", ["text", "_additional {answer {hasAnswer property result startPosition endPosition} }"])
-        .with_ask(ask)
+        .get("Article", ["tags","title", "text"])
+        .with_generate(single_prompt=prompt)
         .with_limit(1)
+
     ).do()
 
-    print(response)
+    result = response["data"]["Get"]["Article"][0]["_additional"]["generate"]["singleResult"]
+
+    formatted_result = format_zakat_response(result)
+
+    return(formatted_result)
+
+
+def format_zakat_response(response: str) -> str:
+    try:
+        # Split the response into lines
+        lines = response.split("\\n")
+
+        # Format the text
+        formatted_lines = [line.strip() for line in lines if line.strip()]
+
+        # Join the formatted lines
+        formatted_text = "\n".join(formatted_lines)
+
+        return formatted_text
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error formatting response: {str(e)}")

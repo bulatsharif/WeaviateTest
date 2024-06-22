@@ -21,7 +21,8 @@ services:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
       PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
       DEFAULT_VECTORIZER_MODULE: 'text2vec-jinaai'
-      ENABLE_MODULES: 'text2vec-jinaai'
+      ENABLE_MODULES: 'text2vec-jinaai, generative-mistral'
+      MISTRAL_APIKEY: RVBRn5Sn26ONsd0CbFBjYWJYR9w416kd
       CLUSTER_HOSTNAME: 'node1'
   web:
     build: .

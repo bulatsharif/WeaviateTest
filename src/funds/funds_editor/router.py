@@ -23,7 +23,9 @@ client = weaviate.Client(
 async def create_fund(fund: FundAdd):
     fund_object = {
         "name": fund.name,
-        "link": fund.link
+        "link": fund.link,
+        "description": fund.description,
+        "image_links": fund.image_links
     }
 
     result = client.data_object.create(
@@ -37,6 +39,8 @@ async def create_fund(fund: FundAdd):
     return FundGet(
         id=object_id,
         name=fund.name,
+        description=fund.description,
+        image_links=fund.image_links,
         link=fund.link
     )
 
@@ -51,14 +55,17 @@ async def delete_fund(fund_id: str):
         class_name="Fund",
     )
     return FundGet(id=fund_id["id"], name=fund_object["properties"]["name"],
-                      link=fund_object["properties"]["link"])
+                      link=fund_object["properties"]["link"], description=fund_object["properties"]["description"]
+                   , image_links=fund_object["properties"]["image_links"])
 
 
 @router.put("/edit-fund/{fund_id}", response_model=FundGet)
 async def edit_fund(fund: FundAdd, fund_id : str):
     fund_object = {
         "name": fund.name,
-        "link": fund.link
+        "link": fund.link,
+        "description": fund.description,
+        "image_links": fund.image_links,
     }
 
     result = client.data_object.replace(
@@ -70,5 +77,8 @@ async def edit_fund(fund: FundAdd, fund_id : str):
     return FundGet(
         id=fund_id,
         name=fund.name,
-        link=fund.link
+        link=fund.link,
+        description=fund.description,
+        image_links=fund.image_links,
+
     )

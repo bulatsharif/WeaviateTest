@@ -32,6 +32,14 @@ class_fund = {
           "name" : "link",
           "dataType" : ["text"]
         },
+        {
+            "name": "image_links",
+            "dataType": ["text[]"]
+        },
+        {
+            "name": "description",
+            "dataType": ["text"]
+        },
     ],
     "moduleConfig": {
         "generative-mistral": {

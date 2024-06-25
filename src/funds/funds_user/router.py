@@ -25,7 +25,7 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     query = (
         client.query.get(
             collection_name,
-            ["name", "link"]
+            ["name", "link", "description", "image_links"]
         )
         .with_additional(["id"])
         .with_limit(batch_size)
@@ -45,6 +45,8 @@ def parse_funds(data: List[Dict]) -> List[FundGet]:
             id=item['_additional']['id'],
             name=item['name'],
             link=item['link'],
+            description=item['description'],
+            image_links=item['image_links']
         )
         funds.append(fund)
     return funds
@@ -73,6 +75,7 @@ async def get_fund(fund_id: str):
         class_name="Fund"
     )
     return FundGet(id=fund_object["id"], name=fund_object["properties"]["name"],
-                      link=fund_object["properties"]["link"])
+                      link=fund_object["properties"]["link"], description=fund_object["properties"]["description"]
+                   , image_links=fund_object["properties"]["image_links"])
 
 

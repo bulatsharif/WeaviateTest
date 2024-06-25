@@ -30,6 +30,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if client.schema.exists("Fund"):
+    client.schema.delete_class("Fund")
 
 if not client.schema.exists("Article"):
     client.schema.create_class(class_article)

@@ -13,6 +13,11 @@ class_article = {
           "name" : "text",
           "dataType" : ["text"]
         },
+        {
+            "name": "content",
+            "dataType": ["text"],
+            "vectorizer": "none"
+        }
     ],
     "moduleConfig": {
         "generative-mistral": {

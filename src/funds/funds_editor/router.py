@@ -57,7 +57,7 @@ async def delete_fund(fund_id: str):
         fund_id,
         class_name="Fund",
     )
-    return FundGet(id=fund_id["id"], name=fund_object["properties"]["name"],
+    return FundGet(id=fund_id, name=fund_object["properties"]["name"],
                       link=fund_object["properties"]["link"], description=fund_object["properties"]["description"]
                    , logo_link=fund_object["properties"]["logo_link"])
 

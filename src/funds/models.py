@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class FundAdd(BaseModel):
     name: str
     description: str
-    image_links: List[str]
+    logo_link: str
     link: str
 
 class FundGet(BaseModel):
@@ -15,4 +15,4 @@ class FundGet(BaseModel):
     name: str
     link: str
     description: str
-    image_links: List[str]
+    logo_link: str

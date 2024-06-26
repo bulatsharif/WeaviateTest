@@ -25,7 +25,7 @@ async def create_fund(fund: FundAdd):
         "name": fund.name,
         "link": fund.link,
         "description": fund.description,
-        "image_links": fund.image_links
+        "logo_link": fund.logo_link
     }
 
     result = client.data_object.create(
@@ -40,7 +40,7 @@ async def create_fund(fund: FundAdd):
         id=object_id,
         name=fund.name,
         description=fund.description,
-        image_links=fund.image_links,
+        logo_link=fund.logo_link,
         link=fund.link
     )
 
@@ -56,7 +56,7 @@ async def delete_fund(fund_id: str):
     )
     return FundGet(id=fund_id["id"], name=fund_object["properties"]["name"],
                       link=fund_object["properties"]["link"], description=fund_object["properties"]["description"]
-                   , image_links=fund_object["properties"]["image_links"])
+                   , logo_link=fund_object["properties"]["logo_link"])
 
 
 @router.put("/edit-fund/{fund_id}", response_model=FundGet)
@@ -65,7 +65,7 @@ async def edit_fund(fund: FundAdd, fund_id : str):
         "name": fund.name,
         "link": fund.link,
         "description": fund.description,
-        "image_links": fund.image_links,
+        "logo_link": fund.logo_link,
     }
 
     result = client.data_object.replace(
@@ -79,6 +79,6 @@ async def edit_fund(fund: FundAdd, fund_id : str):
         name=fund.name,
         link=fund.link,
         description=fund.description,
-        image_links=fund.image_links,
+        logo_link=fund.logo_link,
 
     )

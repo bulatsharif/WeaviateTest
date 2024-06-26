@@ -33,19 +33,15 @@ class_fund = {
           "dataType" : ["text"]
         },
         {
-            "name": "image_links",
-            "dataType": ["text[]"]
+            "name": "logo_link",
+            "dataType": ["text"]
         },
         {
             "name": "description",
             "dataType": ["text"]
         },
     ],
-    "moduleConfig": {
-        "generative-mistral": {
-            "model": "mistral-medium-latest",
-        },
-    }
+    "vectorizer": "none"
 }
 
 

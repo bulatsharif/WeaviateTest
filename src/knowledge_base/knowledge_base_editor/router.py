@@ -5,7 +5,7 @@ import weaviate
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
-from src.knowledge_base.models import ArticleGet, ArticleAdd
+from src.knowledge_base.models import ArticleGet, ArticleAdd, Content
 
 router = APIRouter(
     prefix="/knowledge-base/edit",
@@ -96,30 +96,47 @@ async def delete_article(article_id: str):
         article_id,
         class_name="Article"
     )
+
+    content_extract = article_object["properties"]
+    content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
+    parsed_content = Content.parse_obj(content)
+
+
+
     client.data_object.delete(
         article_id,
         class_name="Article",
     )
     return ArticleGet(id=article_object["id"], tags=article_object["properties"]["tags"],
                       text=article_object["properties"]["text"], title=article_object["properties"]["title"],
-                      content=article_object["properties"]["content"])
-
+                      content=parsed_content)
 
 @router.put("/edit-article/{article_id}", response_model=ArticleGet)
 async def edit_article(article: ArticleAdd, article_id : str):
+    content_dict = article.content.dict()
+    content_json = json.dumps(content_dict)
+
+    # Create the article object
     article_object = {
         "tags": article.tags,
         "title": article.title,
         "text": article.text,
-        "content": article.content
+        "content": content_json
     }
 
+
+    # Create the object in Weaviate
     result = client.data_object.replace(
         uuid=article_id,
         class_name="Article",
         data_object=article_object
     )
 
+
+    # Extract the object ID from the result
+    # Retrieve the created object
+
+    # Return the ArticleGet response model
     return ArticleGet(
         id=article_id,
         tags=article.tags,
@@ -127,4 +144,9 @@ async def edit_article(article: ArticleAdd, article_id : str):
         text=article.text,
         content=article.content
     )
+
+
+
+
+
 #@app.post("/search-article/", response_model=ArticleGet)

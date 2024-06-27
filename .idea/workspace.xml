@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added check for the link" />
+    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Fixed deletion">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -94,7 +97,8 @@
       <workItem from="1719002461928" duration="3774000" />
       <workItem from="1719035317095" duration="7174000" />
       <workItem from="1719312196749" duration="3349000" />
-      <workItem from="1719385417913" duration="13192000" />
+      <workItem from="1719385417913" duration="14604000" />
+      <workItem from="1719475529164" duration="307000" />
     </task>
     <task id="LOCAL-00001" summary="Main py changed to localhost">
       <option name="closed" value="true" />
@@ -408,7 +412,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719410836861</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Fixed deletion">
+      <option name="closed" value="true" />
+      <created>1719411309070</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1719411309070</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -424,7 +436,8 @@
     <MESSAGE value="Changed, now only one link to image in fund, removed vectorizer" />
     <MESSAGE value="Added markdown content for article" />
     <MESSAGE value="Added check for the link" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added check for the link" />
+    <MESSAGE value="Fixed deletion" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed deletion" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/WeaviateTest$WeaviateTest.coverage" NAME="WeaviateTest Coverage Results" MODIFIED="1718537230971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

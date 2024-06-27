@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 client = weaviate.Client(
-    url="http://weaviate:8080",
+    url="http://158.160.153.243:8080",
     additional_headers = {
         "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr",
         "X-Mistral-Api-Key": "RVBRn5Sn26ONsd0CbFBjYWJYR9w416kd"
@@ -100,8 +100,6 @@ async def delete_article(article_id: str):
     content_extract = article_object["properties"]
     content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
     parsed_content = Content.parse_obj(content)
-
-
 
     client.data_object.delete(
         article_id,

@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added properties to funds">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_06_2024_10_16_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_06_2024_10_16__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculator/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculator/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" afterDir="false" />
-    </list>
+    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added properties to funds" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Added properties to funds">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_06_2024_10_16_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_06_2024_10_16__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/funds/funds_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/funds/funds_editor/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/funds/funds_user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/funds/funds_user/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/funds/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/funds/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculator/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculator/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,8 +42,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/bulatsharif/WeaviateTest.git&quot;,
-    &quot;accountId&quot;: &quot;366d1043-af6b-4215-a62b-12b34b806a2e&quot;
+    &quot;url&quot;: &quot;https://github.com/RailSAB/WeaviateTest.git&quot;,
+    &quot;accountId&quot;: &quot;5642b89d-3eca-4ad3-b9cf-a8b133a19d72&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -77,8 +78,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17890.14" />
-        <option value="bundled-python-sdk-5b207ade9991-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17890.14" />
+        <option value="bundled-python-sdk-5b207ade9991-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.17890.14" />
       </set>
     </attachedChunks>
   </component>

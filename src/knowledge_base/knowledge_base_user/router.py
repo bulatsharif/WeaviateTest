@@ -4,7 +4,7 @@ from typing import List, Dict
 import weaviate
 from fastapi import APIRouter
 
-from src.knowledge_base.models import ArticleGet, Question
+from src.knowledge_base.models import ArticleGet, Question, Content
 
 router = APIRouter(
     prefix="/knowledge-base",
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 client = weaviate.Client(
-    url="http://weaviate:8080",
+    url="http://158.160.153.243:8080",
     additional_headers = {
         "X-Jinaai-Api-Key": "jina_5d1f8bfbfcb64374b320054c5627291dy0Ph73OTluT40uUOOVb4vn7cAPAr",
         "X-Mistral-Api-Key": "RVBRn5Sn26ONsd0CbFBjYWJYR9w416kd"
@@ -27,7 +27,7 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     query = (
         client.query.get(
             collection_name,
-            ["tags", "title", "text"]
+            ["tags", "title", "text", "content"]
         )
         .with_additional(["id"])
         .with_limit(batch_size)
@@ -43,14 +43,18 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
 def parse_articles(data: List[Dict]) -> List[ArticleGet]:
     articles = []
     for item in data:
+        content = json.loads(item['content']) if 'content' in item else {}
+        parsed_content = Content.parse_obj(content)
         article = ArticleGet(
             id=item['_additional']['id'],
             tags=item['tags'],
             title=item['title'],
-            text=item['text']
+            text=item['text'],
+            content=parsed_content
         )
         articles.append(article)
     return articles
+
 
 
 @router.get("/get-articles", response_model=List[ArticleGet])
@@ -75,15 +79,20 @@ async def get_article(article_id: str):
         article_id,
         class_name="Article"
     )
+    content_extract = article_object["properties"]
+    content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
+    parsed_content = Content.parse_obj(content)
+
     return ArticleGet(id=article_object["id"], tags=article_object["properties"]["tags"],
-                      text=article_object["properties"]["text"], title=article_object["properties"]["title"])
+                      text=article_object["properties"]["text"], title=article_object["properties"]["title"],
+                      content=parsed_content)
 
 
 @router.post("/search-article/")
 async def search_article(text: str):
     response = (
         client.query
-        .get("Article", ["tags","title", "text"])
+        .get("Article", ["tags","title", "text", "content"])
         .with_near_text({
             "concepts": [text]
         })
@@ -92,11 +101,16 @@ async def search_article(text: str):
         .do()
     )
 
+    content_extract = response["data"]["Get"]["Article"][0]
+    content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
+    parsed_content = Content.parse_obj(content)
+
     return ArticleGet(
         id=response["data"]["Get"]["Article"][0]["_additional"]["id"],
         tags=response["data"]["Get"]["Article"][0]["tags"],
         title=response["data"]["Get"]["Article"][0]["title"],
-        text=response["data"]["Get"]["Article"][0]["text"]
+        text=response["data"]["Get"]["Article"][0]["text"],
+        content=parsed_content
     )
 
 

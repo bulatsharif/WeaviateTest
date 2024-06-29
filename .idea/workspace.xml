@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Fixed knowledge deletion and editing">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_editor/router.py" afterDir="false" />
-    </list>
+    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Updated zakat on property calculation" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,6 +97,7 @@
       <workItem from="1719385417913" duration="14604000" />
       <workItem from="1719475529164" duration="1183000" />
       <workItem from="1719520430652" duration="1191000" />
+      <workItem from="1719640945705" duration="345000" />
     </task>
     <task id="LOCAL-00001" summary="Main py changed to localhost">
       <option name="closed" value="true" />
@@ -429,7 +427,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719475983064</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Updated zakat on property calculation">
+      <option name="closed" value="true" />
+      <created>1719641121819</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1719641121819</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -447,7 +453,8 @@
     <MESSAGE value="Added check for the link" />
     <MESSAGE value="Fixed deletion" />
     <MESSAGE value="Fixed knowledge deletion and editing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed knowledge deletion and editing" />
+    <MESSAGE value="Updated zakat on property calculation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated zakat on property calculation" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/WeaviateTest$WeaviateTest.coverage" NAME="WeaviateTest Coverage Results" MODIFIED="1718537230971" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

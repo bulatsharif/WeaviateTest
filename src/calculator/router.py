@@ -4,7 +4,7 @@ from src.calculator.utility.nisab_api_client import fetch_silver_value, convert_
 from src.calculator.utility.nisab_on_livestock_calculation import calculate_goats, calculate_sheep, calculate_buffaloes, \
     calculate_cows, calculate_camels, calculate_horses
 from src.calculator.schemas import ZakatOnProperty, \
-    ZakatOnLivestock, ZakatUshrResponse, ZakatUshrRequest, ZakatUshrItem, NisabValue, ZakatOnPropertyCalculated, \
+    ZakatOnLivestock, ZakatUshrResponse, ZakatUshrRequest, ZakatUshrItem, ZakatOnPropertyCalculated, \
     ZakatOnLiveStockResponse
 
 router = APIRouter(
@@ -145,8 +145,3 @@ async def calculate_zakat_ushr(request : ZakatUshrRequest):
 
     return response
 
-@router.get("/nisab-value", response_model=NisabValue)
-async def get_nisab_value():
-    silver_price = await fetch_silver_value('RUB')
-    nisab_value = NisabValue(nisab_value=int(silver_price * 612.35), currency='RUB')
-    return nisab_value

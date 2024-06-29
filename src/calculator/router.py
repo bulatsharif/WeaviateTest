@@ -12,61 +12,112 @@ router = APIRouter(
     tags=["Zakat Calculator"]
 )
 
+currencies = {
+    'XAG', 'XAG-BID', 'XAG-ASK', 'XAU', 'XAU-BID', 'XAU-ASK', 'XPD', 'XPD-BID', 'XPD-ASK',
+    'XPT', 'XPT-BID', 'XPT-ASK', 'XRH', 'LBMA-XAG', 'LBMA-XAU-AM', 'LBMA-XAU-PM', 'LBMA-XPD-AM',
+    'LBMA-XPD-PM', 'LBMA-XPT-AM', 'LBMA-XPT-PM', 'ALU', 'XCO', 'XCU', 'XGA', 'XIN', 'IRON', 'XPB',
+    'XLI', 'XMO', 'NI', 'XND', 'XSN', 'XTE', 'XU', 'ZNC', 'XAU-AHME', 'XAU-BANG', 'XAU-BHOP',
+    'XAU-CHAN', 'XAU-CHEN', 'XAU-COIM', 'XAU-DEHR', 'XAU-FARI', 'XAU-GURG', 'XAU-GUWA', 'XAU-HYDE',
+    'XAU-INDO', 'XAU-JAIP', 'XAU-KANP', 'XAU-KOCH', 'XAU-KOLH', 'XAU-KOLK', 'XAU-LUCK', 'XAU-LUDH',
+    'XAU-MADU', 'XAU-MALA', 'XAU-MANG', 'XAU-MEER', 'XAU-MUMB', 'XAU-MYSO', 'XAU-NAGP', 'XAU-NOID',
+    'XAU-PATN', 'XAU-POND', 'XAU-PUNE', 'XAU-RAIP', 'XAU-SALE', 'XAU-VIJA', 'XAU-VISA', 'XAG-AHME',
+    'XAG-BANG', 'XAG-CHAN', 'XAG-CHEN', 'XAG-COIM', 'XAG-HYDE', 'XAG-JAIP', 'XAG-KOLK', 'XAG-LUCK',
+    'XAG-MADU', 'XAG-MANG', 'XAG-MUMB', 'XAG-MYSO', 'XAG-NAGP', 'XAG-PATN', 'XAG-PUNE', 'XAG-SALE',
+    'XAG-VIJA', 'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AZN', 'BAM', 'BBD', 'BDT',
+    'BGN', 'BHD', 'BIF', 'BIH', 'BND', 'BOB', 'BRL', 'BSD', 'BTC', 'BTN', 'BYN', 'BZD', 'CAD', 'CDF',
+    'CHF', 'CLF', 'CLP', 'CNY', 'COP', 'CRC', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EGP', 'ERN',
+    'ETB', 'ETH', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHS', 'GIP', 'GMD', 'GNF', 'GTQ', 'GYD', 'HKD',
+    'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES',
+    'KGS', 'KHR', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LYD', 'MAD',
+    'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRO', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD',
+    'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON',
+    'RSD', 'RUB', 'RWF', 'SAR', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SLL', 'SOS', 'SRD', 'STN', 'SVC',
+    'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU',
+    'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF', 'XPF', 'XRP', 'YER', 'ZAR', 'ZMK', 'ZMW'
+}
+
 @router.post("/zakat-property", response_model=ZakatOnPropertyCalculated)
 async def calculate_zakat_on_property(property: ZakatOnProperty):
     savings_value = 0
 
     # cash
     for item in property.cash:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # cash_on_bank_cards
     for item in property.cash_on_bank_cards:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # silver_jewelry
     for item in property.silver_jewelry:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # gold_jewelry
     for item in property.gold_jewelry:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # purchased_product_for_resaling
     for item in property.purchased_product_for_resaling:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # unfinished_product
     for item in property.unfinished_product:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # produced_product_for_resaling
     for item in property.produced_product_for_resaling:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # purchased_not_for_resaling
     for item in property.purchased_not_for_resaling:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # used_after_nisab
     for item in property.used_after_nisab:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # rent_money
     for item in property.rent_money:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # stocks_for_resaling
     for item in property.stocks_for_resaling:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # income_from_stocks
     for item in property.income_from_stocks:
-        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
 
     # taxes_value
     for item in property.taxes_value:
-        savings_value -= convert_currency(property.currency, item.currency_code, item.value)
+        if item.currency_code not in currencies:
+            item.currency_code = property.currency
+        savings_value -= await convert_currency(property.currency, item.currency_code, item.value)
 
     zakat_value = savings_value * 0.025
     if zakat_value == 0:

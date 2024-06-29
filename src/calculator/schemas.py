@@ -4,21 +4,25 @@ from pydantic import BaseModel
 
 
 # Schemas for Zakat on Property
+class ZakatOnPropertyItem(BaseModel):
+    currency_code: Optional[str]
+    value: Optional[int]
+
+
 class ZakatOnProperty(BaseModel):
-    cash: Optional[int]
-    cash_on_bank_cards: Optional[int]
-    silver_jewelry: Optional[int]
-    gold_jewelry: Optional[int]
-    purchased_product_for_resaling: Optional[int]
-    unfinished_product: Optional[int]
-    produced_product_for_resaling: Optional[int]
-    purchased_not_for_resaling: Optional[int]
-    used_after_nisab: Optional[int]
-    rent_money: Optional[int]
-    stocks_for_resaling: Optional[int]
-    income_from_stocks: Optional[int]
-    taxes_value: Optional[int]
-    nisab_value: Optional[int]
+    cash: Optional[List[ZakatOnPropertyItem]]
+    cash_on_bank_cards: Optional[List[ZakatOnPropertyItem]]
+    silver_jewelry: Optional[List[ZakatOnPropertyItem]]
+    gold_jewelry: Optional[List[ZakatOnPropertyItem]]
+    purchased_product_for_resaling: Optional[List[ZakatOnPropertyItem]]
+    unfinished_product: Optional[List[ZakatOnPropertyItem]]
+    produced_product_for_resaling: Optional[List[ZakatOnPropertyItem]]
+    purchased_not_for_resaling: Optional[List[ZakatOnPropertyItem]]
+    used_after_nisab: Optional[List[ZakatOnPropertyItem]]
+    rent_money: Optional[List[ZakatOnPropertyItem]]
+    stocks_for_resaling: Optional[List[ZakatOnPropertyItem]]
+    income_from_stocks: Optional[List[ZakatOnPropertyItem]]
+    taxes_value: Optional[List[ZakatOnPropertyItem]]
     currency: str = "RUB"
 
     class Config:
@@ -28,7 +32,7 @@ class ZakatOnProperty(BaseModel):
 class ZakatOnPropertyCalculated(BaseModel):
     zakat_value: float
     nisab_value: bool
-    currency: Optional[str] = "RUB"
+    currency: str = "RUB"
 
 
 # Schemas for Zakat Livestock
@@ -78,6 +82,10 @@ class ZakatUshrResponse(BaseModel):
     zakat_ushr_value: List[ZakatUshrItem]
 
 
-class NisabValue(BaseModel):
+class NisabValueResponse(BaseModel):
     nisab_value: int
-    currency: Optional[str] = "RUB"
+    currency: str = "RUB"
+
+
+class NisabValueRequest(BaseModel):
+    currency: str = "RUB"

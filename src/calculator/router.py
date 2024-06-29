@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from src.calculator.utility.nisab_api_client import fetch_silver_value
+from src.calculator.utility.nisab_api_client import fetch_silver_value, convert_currency
 from src.calculator.utility.nisab_on_livestock_calculation import calculate_goats, calculate_sheep, calculate_buffaloes, \
     calculate_cows, calculate_camels, calculate_horses
 from src.calculator.schemas import ZakatOnProperty, \
@@ -14,17 +14,64 @@ router = APIRouter(
 
 @router.post("/zakat-property", response_model=ZakatOnPropertyCalculated)
 async def calculate_zakat_on_property(property: ZakatOnProperty):
-    savings_value = (
-        (
-            property.cash + property.cash_on_bank_cards + property.silver_jewelry + property.gold_jewelry
-            + property.purchased_product_for_resaling + property.unfinished_product + property.produced_product_for_resaling
-            + property.purchased_not_for_resaling + property.used_after_nisab + property.rent_money + property.stocks_for_resaling
-            + property.income_from_stocks - property.taxes_value
-        )
-    )
+    savings_value = 0
+
+    # cash
+    for item in property.cash:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # cash_on_bank_cards
+    for item in property.cash_on_bank_cards:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # silver_jewelry
+    for item in property.silver_jewelry:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # gold_jewelry
+    for item in property.gold_jewelry:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # purchased_product_for_resaling
+    for item in property.purchased_product_for_resaling:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # unfinished_product
+    for item in property.unfinished_product:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # produced_product_for_resaling
+    for item in property.produced_product_for_resaling:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # purchased_not_for_resaling
+    for item in property.purchased_not_for_resaling:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # used_after_nisab
+    for item in property.used_after_nisab:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # rent_money
+    for item in property.rent_money:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # stocks_for_resaling
+    for item in property.stocks_for_resaling:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # income_from_stocks
+    for item in property.income_from_stocks:
+        savings_value += convert_currency(property.currency, item.currency_code, item.value)
+
+    # taxes_value
+    for item in property.taxes_value:
+        savings_value -= convert_currency(property.currency, item.currency_code, item.value)
+
     zakat_value = savings_value * 0.025
     if zakat_value == 0:
         raise HTTPException(status_code=400, detail="No assets were added")
+
     silver_price = await fetch_silver_value(property.currency)
     nisab_value = int(silver_price * 612.35)
     if savings_value > nisab_value:

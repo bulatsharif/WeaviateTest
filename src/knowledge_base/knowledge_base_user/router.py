@@ -90,6 +90,11 @@ async def get_article(article_id: str):
 
 @router.post("/search-article/")
 async def search_article(text: SearchInput):
+
+    if text.searchString == "":
+        return await get_articles()
+
+
     response = (
         client.query
         .get("Article", ["tags","title", "text", "content"])
@@ -97,21 +102,32 @@ async def search_article(text: SearchInput):
             "concepts": [text.searchString]
         })
         .with_additional("id")
-        .with_limit(1)
+        .with_limit(3)
         .do()
     )
+    articles = []
 
-    content_extract = response["data"]["Get"]["Article"][0]
-    content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
-    parsed_content = Content.parse_obj(content)
+    for i in range(3):
+        content_extract = response["data"]["Get"]["Article"][i]
+        content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
+        parsed_content = Content.parse_obj(content)
+        articles.append(ArticleGet(
+            id=response["data"]["Get"]["Article"][i]["_additional"]["id"],
+            tags=response["data"]["Get"]["Article"][i]["tags"],
+            title=response["data"]["Get"]["Article"][i]["title"],
+            text=response["data"]["Get"]["Article"][i]["text"],
+            content=parsed_content
+        ))
 
-    return ArticleGet(
-        id=response["data"]["Get"]["Article"][0]["_additional"]["id"],
-        tags=response["data"]["Get"]["Article"][0]["tags"],
-        title=response["data"]["Get"]["Article"][0]["title"],
-        text=response["data"]["Get"]["Article"][0]["text"],
-        content=parsed_content
-    )
+
+    return articles
+    # return ArticleGet(
+    #     id=response["data"]["Get"]["Article"][0]["_additional"]["id"],
+    #     tags=response["data"]["Get"]["Article"][0]["tags"],
+    #     title=response["data"]["Get"]["Article"][0]["title"],
+    #     text=response["data"]["Get"]["Article"][0]["text"],
+    #     content=parsed_content
+    # )
 
 
 @router.post("/ask-question/")

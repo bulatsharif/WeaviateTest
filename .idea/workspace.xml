@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Fixed router of calculator">
+    <list default="true" id="39b2889b-db84-46b6-b0dc-c8c1213849d1" name="Changes" comment="Changed search article model">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculator/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculator/utility/nisab_api_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/knowledge_base/knowledge_base_user/router.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +101,7 @@
       <workItem from="1719475529164" duration="1183000" />
       <workItem from="1719520430652" duration="1191000" />
       <workItem from="1719640945705" duration="2603000" />
+      <workItem from="1719672163928" duration="1505000" />
     </task>
     <task id="LOCAL-00001" summary="Main py changed to localhost">
       <option name="closed" value="true" />
@@ -447,7 +447,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719641359984</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Changed search article model">
+      <option name="closed" value="true" />
+      <created>1719672444264</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1719672444264</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -467,7 +475,8 @@
     <MESSAGE value="Fixed knowledge deletion and editing" />
     <MESSAGE value="Updated zakat on property calculation" />
     <MESSAGE value="Fixed router of calculator" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed router of calculator" />
+    <MESSAGE value="Changed search article model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed search article model" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

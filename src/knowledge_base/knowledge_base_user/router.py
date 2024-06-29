@@ -4,7 +4,7 @@ from typing import List, Dict
 import weaviate
 from fastapi import APIRouter
 
-from src.knowledge_base.models import ArticleGet, Question, Content
+from src.knowledge_base.models import ArticleGet, Question, Content, SearchInput
 
 router = APIRouter(
     prefix="/knowledge-base",
@@ -89,12 +89,12 @@ async def get_article(article_id: str):
 
 
 @router.post("/search-article/")
-async def search_article(text: str):
+async def search_article(text: SearchInput):
     response = (
         client.query
         .get("Article", ["tags","title", "text", "content"])
         .with_near_text({
-            "concepts": [text]
+            "concepts": [text.searchString]
         })
         .with_additional("id")
         .with_limit(1)

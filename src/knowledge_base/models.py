@@ -11,6 +11,12 @@ class Ops(BaseModel):
 class Content(BaseModel):
     ops: List[Ops]
 
+class Content(BaseModel):
+    ops: List[Ops]
+
+class SearchInput(BaseModel):
+    searchString: str
+
 class ArticleAdd(BaseModel):
     tags: List[str]
     title: str

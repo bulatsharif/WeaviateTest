@@ -1,38 +1,16 @@
-import json
-from typing import List, Dict
-
-import weaviate
-from fastapi import APIRouter
-
 from src.knowledge_base.models import ArticleGet, Question, Content, SearchInput
+from src.weaviate_client import client
+from fastapi import HTTPException
+from typing import List, Dict
+from fastapi import APIRouter
+import json
 
 router = APIRouter(
     prefix="/knowledge-base",
     tags=["Knowledge Base User"]
 )
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv('.env')
-
-jinaApi: str = os.getenv("JINA_AI_API_KEY")
-mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")
-host: str = os.getenv("HOST")
-
-client = weaviate.Client(
-    url=host,
-    additional_headers={
-        "X-Jinaai-Api-Key": jinaApi,
-        "X-Mistral-Api-Key": mistralApi
-    }
-)
-
-
-
-
-
-#Helper function to get all articles
 def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     query = (
         client.query.get(
@@ -49,7 +27,6 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     return result["data"]["Get"][collection_name]
 
 
-#Helper function to get all articles
 def parse_articles(data: List[Dict]) -> List[ArticleGet]:
     articles = []
     for item in data:
@@ -66,7 +43,6 @@ def parse_articles(data: List[Dict]) -> List[ArticleGet]:
     return articles
 
 
-
 @router.get("/get-articles", response_model=List[ArticleGet])
 async def get_articles():
     cursor = None
@@ -77,14 +53,12 @@ async def get_articles():
             break
         articles_unformatted.extend(next_batch)
         cursor = next_batch[-1]["_additional"]["id"]
-
     articles_output = parse_articles(articles_unformatted)
     return articles_output
 
 
 @router.get("/get-article/{article_id}", response_model=ArticleGet)
 async def get_article(article_id: str):
-    # Handle when to object is not existant
     article_object = client.data_object.get_by_id(
         article_id,
         class_name="Article"
@@ -92,7 +66,6 @@ async def get_article(article_id: str):
     content_extract = article_object["properties"]
     content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
     parsed_content = Content.parse_obj(content)
-
     return ArticleGet(id=article_object["id"], tags=article_object["properties"]["tags"],
                       text=article_object["properties"]["text"], title=article_object["properties"]["title"],
                       content=parsed_content)
@@ -100,14 +73,11 @@ async def get_article(article_id: str):
 
 @router.post("/search-article/")
 async def search_article(text: SearchInput):
-
     if text.searchString == "":
         return await get_articles()
-
-
     response = (
         client.query
-        .get("Article", ["tags","title", "text", "content"])
+        .get("Article", ["tags", "title", "text", "content"])
         .with_near_text({
             "concepts": [text.searchString]
         })
@@ -116,7 +86,6 @@ async def search_article(text: SearchInput):
         .do()
     )
     articles = []
-
     for i in range(3):
         content_extract = response["data"]["Get"]["Article"][i]
         content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
@@ -128,49 +97,29 @@ async def search_article(text: SearchInput):
             text=response["data"]["Get"]["Article"][i]["text"],
             content=parsed_content
         ))
-
-
     return articles
-    # return ArticleGet(
-    #     id=response["data"]["Get"]["Article"][0]["_additional"]["id"],
-    #     tags=response["data"]["Get"]["Article"][0]["tags"],
-    #     title=response["data"]["Get"]["Article"][0]["title"],
-    #     text=response["data"]["Get"]["Article"][0]["text"],
-    #     content=parsed_content
-    # )
 
 
 @router.post("/ask-question/")
 async def ask_question(question: Question):
-
     prompt = question.question + "? Use the title and text from the articles: {title} and {text}"
-
     response = (
         client.query
-        .get("Article", ["tags","title", "text"])
+        .get("Article", ["tags", "title", "text"])
         .with_generate(single_prompt=prompt)
         .with_limit(1)
 
     ).do()
-
     result = response["data"]["Get"]["Article"][0]["_additional"]["generate"]["singleResult"]
-
     formatted_result = format_zakat_response(result)
-
-    return(formatted_result)
+    return formatted_result
 
 
 def format_zakat_response(response: str) -> str:
     try:
-        # Split the response into lines
         lines = response.split("\\n")
-
-        # Format the text
         formatted_lines = [line.strip() for line in lines if line.strip()]
-
-        # Join the formatted lines
         formatted_text = "\n".join(formatted_lines)
-
         return formatted_text
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error formatting response: {str(e)}")

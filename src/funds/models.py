@@ -1,7 +1,4 @@
-from typing import List
-
 from pydantic import BaseModel
-
 
 
 class FundAdd(BaseModel):
@@ -9,6 +6,7 @@ class FundAdd(BaseModel):
     description: str
     logo_link: str
     link: str
+
 
 class FundGet(BaseModel):
     id: str

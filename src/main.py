@@ -1,7 +1,3 @@
-from fastapi import FastAPI
-import weaviate
-
-from src.schemas import class_article, class_fund, class_question
 from src.knowledge_base.knowledge_base_user.router import router as router_user
 from src.knowledge_base.knowledge_base_editor.router import router as router_editor
 from src.calculator.router import router as router_calculator
@@ -10,42 +6,17 @@ from src.funds.funds_editor.router import router as router_funds_editor
 from src.QnA.QnA_user.router import router as router_qna_user
 from src.QnA.QnA_editor.router import router as router_qna_editor
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 
 app = FastAPI()
 
-from dotenv import load_dotenv
-import os
-
-load_dotenv('.env')
-
-jinaApi: str = os.getenv("JINA_AI_API_KEY")
-mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")
-host: str = os.getenv("HOST")
-
-client = weaviate.Client(
-    url=host,
-    additional_headers={
-        "X-Jinaai-Api-Key": jinaApi,
-        "X-Mistral-Api-Key": mistralApi
-    }
-)
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to your needs
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-if not client.schema.exists("Article"):
-    client.schema.create_class(class_article)
-
-if not client.schema.exists("Fund"):
-    client.schema.create_class(class_fund)
-
-if not client.schema.exists("Question"):
-    client.schema.create_class(class_question)
 
 app.include_router(router_user)
 app.include_router(router_editor)
@@ -54,9 +25,3 @@ app.include_router(router_funds_user)
 app.include_router(router_funds_editor)
 app.include_router(router_qna_user)
 app.include_router(router_qna_editor)
-
-
-@app.get("/get-schema-meta")
-async def get_schema_meta():
-    print(client.schema.get("Article"))
-    return client.schema.get()

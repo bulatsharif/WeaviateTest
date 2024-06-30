@@ -1,9 +1,7 @@
 from typing import List, Optional
-
 from pydantic import BaseModel
 
 
-# Schemas for Zakat on Property
 class ZakatOnPropertyItem(BaseModel):
     currency_code: Optional[str]
     value: Optional[int]
@@ -35,7 +33,6 @@ class ZakatOnPropertyCalculated(BaseModel):
     currency: str = "RUB"
 
 
-# Schemas for Zakat Livestock
 class ZakatOnLivestock(BaseModel):
     camels: Optional[int]
     cows: Optional[int]
@@ -59,8 +56,6 @@ class ZakatOnLiveStockResponse(BaseModel):
     value_for_horses: int
     nisab_status: bool
 
-
-# Schemas for Zakat Ushr
 
 class Crop(BaseModel):
     type: str

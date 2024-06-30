@@ -1,33 +1,12 @@
-from typing import List, Dict
-
-import weaviate
+from src.QnA.models import QuestionGet, QuestionAdd
+from src.weaviate_client import client
 from fastapi import APIRouter
 
-from src.QnA.models import QuestionGet, QuestionAdd
 
 router = APIRouter(
     prefix="/qna/edit",
     tags=["Q&A Editor"]
 )
-
-from dotenv import load_dotenv
-import os
-
-load_dotenv('.env')
-
-jinaApi: str = os.getenv("JINA_AI_API_KEY")
-mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")
-host: str = os.getenv("HOST")
-
-client = weaviate.Client(
-    url=host,
-    additional_headers={
-        "X-Jinaai-Api-Key": jinaApi,
-        "X-Mistral-Api-Key": mistralApi
-    }
-)
-
-
 
 
 @router.post("/create-question/", response_model=QuestionGet)
@@ -45,13 +24,13 @@ async def create_question(question: QuestionAdd):
 
     object_id = result
 
-
     return QuestionGet(
         id=object_id,
         question=question.question,
         answer=question.answer,
         tags=question.tags,
     )
+
 
 @router.delete("/delete-question/{question_id}", response_model=QuestionGet)
 async def delete_question(question_id: str):
@@ -64,18 +43,18 @@ async def delete_question(question_id: str):
         class_name="Question",
     )
     return QuestionGet(id=question_object["id"], question=question_object["properties"]["question"],
-                      answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
+                       answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
 
 
 @router.put("/edit-question/{question_id}", response_model=QuestionGet)
-async def edit_question(question: QuestionAdd, question_id : str):
+async def edit_question(question: QuestionAdd, question_id: str):
     question_object = {
         "question": question.question,
         "answer": question.answer,
         "tags": question.tags
     }
 
-    result = client.data_object.replace(
+    client.data_object.replace(
         uuid=question_id,
         class_name="Question",
         data_object=question_object
@@ -87,4 +66,3 @@ async def edit_question(question: QuestionAdd, question_id : str):
         answer=question.answer,
         tags=question.tags,
     )
-#@app.post("/search-article/", response_model=ArticleGet)

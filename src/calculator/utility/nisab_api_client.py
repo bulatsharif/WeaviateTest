@@ -1,11 +1,10 @@
-from dotenv import load_dotenv
 from metalpriceapi.client import Client
 from dotenv import load_dotenv
 import os
 
 load_dotenv('.env')
-
 API_KEY: str = os.getenv("METAL_PRICE_API_KEY")
+
 
 async def fetch_silver_value(currency: str):
     client = Client(API_KEY)

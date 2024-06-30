@@ -1,36 +1,14 @@
 from typing import List, Dict
-
-import weaviate
 from fastapi import APIRouter
-
-from src.funds.models import FundGet, FundAdd
+from src.funds.models import FundGet
+from src.weaviate_client import client
 
 router = APIRouter(
     prefix="/funds",
     tags=["Verified Charity Fund"]
 )
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv('.env')
-
-jinaApi: str = os.getenv("JINA_AI_API_KEY")
-mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")
-host: str = os.getenv("HOST")
-
-client = weaviate.Client(
-    url=host,
-    additional_headers={
-        "X-Jinaai-Api-Key": jinaApi,
-        "X-Mistral-Api-Key": mistralApi
-    }
-)
-
-
-
-
-#Helper function to get all funds
 def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     query = (
         client.query.get(
@@ -47,7 +25,6 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     return result["data"]["Get"][collection_name]
 
 
-#Helper function to get all funds
 def parse_funds(data: List[Dict]) -> List[FundGet]:
     funds = []
     for item in data:
@@ -79,13 +56,10 @@ async def get_funds():
 
 @router.get("/get-fund/{fund_id}", response_model=FundGet)
 async def get_fund(fund_id: str):
-    # Handle when to object is not existant
     fund_object = client.data_object.get_by_id(
         fund_id,
         class_name="Fund"
     )
     return FundGet(id=fund_object["id"], name=fund_object["properties"]["name"],
-                      link=fund_object["properties"]["link"], description=fund_object["properties"]["description"]
-                   , logo_link=fund_object["properties"]["logo_link"])
-
-
+                   link=fund_object["properties"]["link"], description=fund_object["properties"]["description"],
+                   logo_link=fund_object["properties"]["logo_link"])

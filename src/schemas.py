@@ -1,17 +1,17 @@
 class_article = {
-    "class" : "Article",
+    "class": "Article",
     "properties": [
         {
-          "name" : "tags",
-          "dataType" : ["text[]"]
+            "name": "tags",
+            "dataType": ["text[]"]
         },
         {
-          "name" : "title",
-          "dataType" : ["text"]
+            "name": "title",
+            "dataType": ["text"]
         },
         {
-          "name" : "text",
-          "dataType" : ["text"]
+            "name": "text",
+            "dataType": ["text"]
         },
         {
             "name": "content",
@@ -27,15 +27,15 @@ class_article = {
 }
 
 class_fund = {
-    "class" : "Fund",
+    "class": "Fund",
     "properties": [
         {
-          "name" : "name",
-          "dataType" : ["text"]
+            "name": "name",
+            "dataType": ["text"]
         },
         {
-          "name" : "link",
-          "dataType" : ["text"]
+            "name": "link",
+            "dataType": ["text"]
         },
         {
             "name": "logo_link",
@@ -49,21 +49,20 @@ class_fund = {
     "vectorizer": "none"
 }
 
-
 class_question = {
-    "class" : "Question",
+    "class": "Question",
     "properties": [
         {
-          "name" : "question",
-          "dataType" : ["text"]
+            "name": "question",
+            "dataType": ["text"]
         },
         {
-          "name" : "answer",
-          "dataType" : ["text"]
+            "name": "answer",
+            "dataType": ["text"]
         },
         {
-          "name" : "tags",
-          "dataType" : ["text[]"]
+            "name": "tags",
+            "dataType": ["text[]"]
         },
     ],
     "moduleConfig": {

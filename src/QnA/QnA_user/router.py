@@ -1,36 +1,15 @@
+from src.QnA.models import QuestionGet
+from src.weaviate_client import client
 from typing import List, Dict
-
-import weaviate
 from fastapi import APIRouter
 
-from src.QnA.models import QuestionGet
 
 router = APIRouter(
     prefix="/qna",
     tags=["Q&A User"]
 )
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv('.env')
-
-jinaApi: str = os.getenv("JINA_AI_API_KEY")
-mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")
-host: str = os.getenv("HOST")
-
-client = weaviate.Client(
-    url=host,
-    additional_headers={
-        "X-Jinaai-Api-Key": jinaApi,
-        "X-Mistral-Api-Key": mistralApi
-    }
-)
-
-
-
-
-#Helper function to get all questions
 def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     query = (
         client.query.get(
@@ -47,7 +26,6 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
     return result["data"]["Get"][collection_name]
 
 
-#Helper function to get all questions
 def parse_questions(data: List[Dict]) -> List[QuestionGet]:
     questions = []
     for item in data:
@@ -78,20 +56,19 @@ async def get_questions():
 
 @router.get("/get-question/{question_id}", response_model=QuestionGet)
 async def get_question(question_id: str):
-    # Handle when to object is not existant
     question_object = client.data_object.get_by_id(
         question_id,
         class_name="Question"
     )
     return QuestionGet(id=question_object["id"], question=question_object["properties"]["question"],
-                      answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
+                       answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
 
 
 @router.post("/search-question/")
 async def search_question(text: str):
     response = (
         client.query
-        .get("Question", ["question","answer", "tags"])
+        .get("Question", ["question", "answer", "tags"])
         .with_near_text({
             "concepts": [text]
         })
@@ -106,5 +83,3 @@ async def search_question(text: str):
         question=response["data"]["Get"]["Question"][0]["question"],
         answer=response["data"]["Get"]["Question"][0]["answer"]
     )
-
-

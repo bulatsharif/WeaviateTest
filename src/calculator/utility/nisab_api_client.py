@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv('.env')
-API_KEY: str = os.getenv("METAL_PRICE_API_KEY")
+API_KEY: str = os.getenv("853f17291b23892561cd898ae718c1be")
 
 
 async def fetch_silver_value(currency: str):

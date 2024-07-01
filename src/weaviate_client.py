@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import weaviate
 import os
 
-load_dotenv('.env')
+load_dotenv('/etc/environment')
 
 jinaApi: str = os.getenv("JINA_AI_API_KEY")
 mistralApi: str = os.getenv("MISTRAL_AI_API_KEY")

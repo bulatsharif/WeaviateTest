@@ -4,8 +4,7 @@ import os
 
 load_dotenv('.env')
 
-
-API_KEY = "853f17291b23892561cd898ae718c1be"
+API_KEY: str = os.getenv("METAL_PRICE_API_KEY")
 
 async def fetch_silver_value(currency: str):
     client = Client(API_KEY)

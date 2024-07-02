@@ -102,3 +102,30 @@ class_organization = {
     ],
     "vectorizer": "none"
 }
+
+class_news = {
+    "class": "News",
+    "properties": [
+        {
+            "name": "name",
+            "dataType": ["text"]
+        },
+        {
+            "name": "body",
+            "dataType": ["text"]
+        },
+        {
+            "name": "image_link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "source_link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "tags",
+            "dataType": ["text[]"]
+        }
+    ],
+    "vectorizer": "none"
+}

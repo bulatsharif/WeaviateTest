@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import weaviate
 import os
 
-from src.schemas import class_organization
+from src.schemas import class_organization, class_news
 
 load_dotenv('.env')
 
@@ -20,3 +20,6 @@ client = weaviate.Client(
 
 if not client.schema.exists("Organization"):
     client.schema.create_class(class_organization)
+
+if not client.schema.exists("News"):
+    client.schema.create_class(class_news)

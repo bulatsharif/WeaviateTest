@@ -7,6 +7,8 @@ from src.QnA.QnA_user.router import router as router_qna_user
 from src.QnA.QnA_editor.router import router as router_qna_editor
 from src.organizations.organization_user.router import router as router_organization_user
 from src.organizations.organizations_editor.router import router as router_organizations_editor
+from src.news.news_user.router import router as router_news_user
+from src.news.news_editor.router import router as router_news_editor
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -31,3 +33,5 @@ app.include_router(router_qna_user)
 app.include_router(router_qna_editor)
 app.include_router(router_organization_user)
 app.include_router(router_organizations_editor)
+app.include_router(router_news_editor)
+app.include_router(router_news_user)

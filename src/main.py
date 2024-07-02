@@ -5,6 +5,8 @@ from src.funds.funds_user.router import router as router_funds_user
 from src.funds.funds_editor.router import router as router_funds_editor
 from src.QnA.QnA_user.router import router as router_qna_user
 from src.QnA.QnA_editor.router import router as router_qna_editor
+from src.organizations.organization_user.router import router as router_organization_user
+from src.organizations.organizations_editor.router import router as router_organizations_editor
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -18,6 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 app.include_router(router_user)
 app.include_router(router_editor)
 app.include_router(router_calculator)
@@ -25,3 +29,5 @@ app.include_router(router_funds_user)
 app.include_router(router_funds_editor)
 app.include_router(router_qna_user)
 app.include_router(router_qna_editor)
+app.include_router(router_organization_user)
+app.include_router(router_organizations_editor)

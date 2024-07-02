@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 import weaviate
 import os
 
+from src.schemas import class_organization
+
 load_dotenv('.env')
 
 jinaApi: str = os.getenv("JINA_AI_API_KEY")
@@ -15,3 +17,6 @@ client = weaviate.Client(
         "X-Mistral-Api-Key": mistralApi
     }
 )
+
+if not client.schema.exists("Organization"):
+    client.schema.create_class(class_organization)

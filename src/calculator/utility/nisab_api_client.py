@@ -6,6 +6,7 @@ load_dotenv('.env')
 
 API_KEY: str = os.getenv("METAL_PRICE_API_KEY")
 
+
 async def fetch_silver_value(currency: str):
     client = Client(API_KEY)
     response = client.fetchLive(base='XAG', currencies=[currency])

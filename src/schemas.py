@@ -71,3 +71,34 @@ class_question = {
         },
     }
 }
+
+class_organization = {
+    "class": "Organization",
+    "properties": [
+        {
+            "name": "name",
+            "dataType": ["text"]
+        },
+        {
+            "name": "description",
+            "dataType": ["text"]
+        },
+        {
+            "name": "logo_link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "categories",
+            "dataType": ["text[]"]
+        },
+        {
+            "name": "countries",
+            "dataType": ["text[]"]
+        },
+    ],
+    "vectorizer": "none"
+}

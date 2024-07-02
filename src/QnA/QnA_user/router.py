@@ -1,4 +1,7 @@
+import json
+
 from src.QnA.models import QuestionGet
+from src.knowledge_base.models import SearchInput
 from src.weaviate_client import client
 from typing import List, Dict
 from fastapi import APIRouter
@@ -64,22 +67,49 @@ async def get_question(question_id: str):
                        answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
 
 
+# @router.post("/search-question/")
+# async def search_question(text: str):
+#     response = (
+#         client.query
+#         .get("Question", ["question", "answer", "tags"])
+#         .with_near_text({
+#             "concepts": [text]
+#         })
+#         .with_additional("id")
+#         .with_limit(3)
+#         .do()
+#     )
+#
+#     return QuestionGet(
+#         id=response["data"]["Get"]["Question"][0]["_additional"]["id"],
+#         tags=response["data"]["Get"]["Question"][0]["tags"],
+#         question=response["data"]["Get"]["Question"][0]["question"],
+#         answer=response["data"]["Get"]["Question"][0]["answer"]
+#     )
+
+
 @router.post("/search-question/")
-async def search_question(text: str):
+async def search_question(text: SearchInput):
+    if text.searchString == "":
+        return await get_questions()
     response = (
         client.query
         .get("Question", ["question", "answer", "tags"])
         .with_near_text({
-            "concepts": [text]
+            "concepts": [text.searchString]
         })
         .with_additional("id")
-        .with_limit(1)
+        .with_limit(3)
         .do()
     )
 
-    return QuestionGet(
-        id=response["data"]["Get"]["Question"][0]["_additional"]["id"],
-        tags=response["data"]["Get"]["Question"][0]["tags"],
-        question=response["data"]["Get"]["Question"][0]["question"],
-        answer=response["data"]["Get"]["Question"][0]["answer"]
-    )
+    print(response)
+    questions = []
+    for i in range(3):
+        questions.append(QuestionGet(
+            id=response["data"]["Get"]["Question"][i]["_additional"]["id"],
+            tags=response["data"]["Get"]["Question"][i]["tags"],
+            question=response["data"]["Get"]["Question"][i]["question"],
+            answer=response["data"]["Get"]["Question"][i]["answer"],
+        ))
+    return questions

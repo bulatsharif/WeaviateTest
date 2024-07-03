@@ -73,20 +73,32 @@ async def get_article(article_id: str):
 
 @router.post("/search-article/")
 async def search_article(text: SearchInput):
+    max_distance = 0.26
     if text.searchString == "":
         return await get_articles()
     response = (
         client.query
         .get("Article", ["tags", "title", "text", "content"])
         .with_near_text({
-            "concepts": [text.searchString]
+            "concepts": [text.searchString],
+            "distance": max_distance
         })
         .with_additional("id")
-        .with_limit(3)
         .do()
     )
     articles = []
-    for i in range(3):
+    if len(response["data"]["Get"]["Article"]) < 3:
+        response = (
+            client.query
+            .get("Article", ["tags", "title", "text", "content"])
+            .with_near_text({
+                "concepts": [text.searchString]
+            })
+            .with_additional("id")
+            .with_limit(3)
+            .do()
+        )
+    for i in range(len(response["data"]["Get"]["Article"])):
         content_extract = response["data"]["Get"]["Article"][i]
         content = json.loads(content_extract["content"]) if 'content' in content_extract else {}
         parsed_content = Content.parse_obj(content)

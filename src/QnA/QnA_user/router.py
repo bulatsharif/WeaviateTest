@@ -88,24 +88,61 @@ async def get_question(question_id: str):
 #     )
 
 
+# @router.post("/search-question/")
+# async def search_question(text: SearchInput):
+#     if text.searchString == "":
+#         return await get_questions()
+#     response = (
+#         client.query
+#         .get("Question", ["question", "answer", "tags"])
+#         .with_near_text({
+#             "concepts": [text.searchString]
+#         })
+#         .with_additional("id")
+#         .with_limit(3)
+#         .do()
+#     )
+#
+#     print(response)
+#     questions = []
+#     for i in range(3):
+#         questions.append(QuestionGet(
+#             id=response["data"]["Get"]["Question"][i]["_additional"]["id"],
+#             tags=response["data"]["Get"]["Question"][i]["tags"],
+#             question=response["data"]["Get"]["Question"][i]["question"],
+#             answer=response["data"]["Get"]["Question"][i]["answer"],
+#         ))
+#     return questions
+
+
 @router.post("/search-question/")
 async def search_question(text: SearchInput):
+    max_distance = 0.26
     if text.searchString == "":
         return await get_questions()
     response = (
         client.query
         .get("Question", ["question", "answer", "tags"])
         .with_near_text({
-            "concepts": [text.searchString]
+            "concepts": [text.searchString],
+            "distance": max_distance
         })
         .with_additional("id")
-        .with_limit(3)
         .do()
     )
-
-    print(response)
     questions = []
-    for i in range(3):
+    if len(response["data"]["Get"]["Question"]) < 3:
+        response = (
+            client.query
+            .get("Question", ["question", "answer", "tags"])
+            .with_near_text({
+                "concepts": [text.searchString]
+            })
+            .with_additional("id")
+            .with_limit(3)
+            .do()
+        )
+    for i in range(len(response["data"]["Get"]["Question"])):
         questions.append(QuestionGet(
             id=response["data"]["Get"]["Question"][i]["_additional"]["id"],
             tags=response["data"]["Get"]["Question"][i]["tags"],

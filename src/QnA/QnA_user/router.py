@@ -67,52 +67,6 @@ async def get_question(question_id: str):
                        answer=question_object["properties"]["answer"], tags=question_object["properties"]["tags"])
 
 
-# @router.post("/search-question/")
-# async def search_question(text: str):
-#     response = (
-#         client.query
-#         .get("Question", ["question", "answer", "tags"])
-#         .with_near_text({
-#             "concepts": [text]
-#         })
-#         .with_additional("id")
-#         .with_limit(3)
-#         .do()
-#     )
-#
-#     return QuestionGet(
-#         id=response["data"]["Get"]["Question"][0]["_additional"]["id"],
-#         tags=response["data"]["Get"]["Question"][0]["tags"],
-#         question=response["data"]["Get"]["Question"][0]["question"],
-#         answer=response["data"]["Get"]["Question"][0]["answer"]
-#     )
-
-
-# @router.post("/search-question/")
-# async def search_question(text: SearchInput):
-#     if text.searchString == "":
-#         return await get_questions()
-#     response = (
-#         client.query
-#         .get("Question", ["question", "answer", "tags"])
-#         .with_near_text({
-#             "concepts": [text.searchString]
-#         })
-#         .with_additional("id")
-#         .with_limit(3)
-#         .do()
-#     )
-#
-#     print(response)
-#     questions = []
-#     for i in range(3):
-#         questions.append(QuestionGet(
-#             id=response["data"]["Get"]["Question"][i]["_additional"]["id"],
-#             tags=response["data"]["Get"]["Question"][i]["tags"],
-#             question=response["data"]["Get"]["Question"][i]["question"],
-#             answer=response["data"]["Get"]["Question"][i]["answer"],
-#         ))
-#     return questions
 
 
 @router.post("/search-question/")
@@ -120,6 +74,19 @@ async def search_question(text: SearchInput):
     max_distance = 0.26
     if text.searchString == "":
         return await get_questions()
+    # response = (
+    #     client.query
+    #     .get("Question", ["question", "answer", "tags"])
+    #     .with_hybrid(
+    #         query=text.searchString,
+    #         properties=["tags^2", "question", "answer"],
+    #         alpha=0.25
+    #     )
+    #     .with_additional(["score", "explainScore"])
+    #     .with_additional("id")
+    #     .do()
+    # )
+    # print(response)
     response = (
         client.query
         .get("Question", ["question", "answer", "tags"])
@@ -142,6 +109,21 @@ async def search_question(text: SearchInput):
             .with_limit(3)
             .do()
         )
+        # response = (
+        #     client.query
+        #     .get("Question", ["question", "answer", "tags"])
+        #     .with_hybrid(
+        #         query=text.searchString,
+        #         properties=["tags^3", "question^2", "answer"],
+        #         alpha=0.5
+        #     )
+        #     .with_near_text({
+        #         "concepts": [text.searchString],
+        #     })
+        #     .with_additional("id")
+        #     .with_limit(3)
+        #     .do()
+        # )
     for i in range(len(response["data"]["Get"]["Question"])):
         questions.append(QuestionGet(
             id=response["data"]["Get"]["Question"][i]["_additional"]["id"],

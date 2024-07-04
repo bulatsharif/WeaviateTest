@@ -21,4 +21,6 @@ class OrganizationGet(BaseModel):
     categories: List[str]
     countries: List[str]
 
-
+class OrganizationSearch(BaseModel):
+    categories: List[str]
+    countries: List[str]

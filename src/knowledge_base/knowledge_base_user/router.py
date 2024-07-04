@@ -1,4 +1,4 @@
-from src.knowledge_base.models import ArticleGet, Question, Content, SearchInput
+from src.knowledge_base.models import ArticleGet, Question, Content, SearchInput, UserRequestGet, UserRequestAdd
 from src.weaviate_client import client
 from fastapi import HTTPException
 from typing import List, Dict
@@ -79,8 +79,13 @@ async def search_article(text: SearchInput):
     response = (
         client.query
         .get("Article", ["tags", "title", "text", "content"])
+        .with_hybrid(
+            query=text.searchString,
+            properties=["tags^3", "title^2", "text"],
+            alpha=0.5
+        )
         .with_near_text({
-            "concepts": [text.searchString],
+            "concepts" : [text.searchString],
             "distance": max_distance
         })
         .with_additional("id")
@@ -91,11 +96,16 @@ async def search_article(text: SearchInput):
         response = (
             client.query
             .get("Article", ["tags", "title", "text", "content"])
+            .with_hybrid(
+                query=text.searchString,
+                properties=["tags^3", "title^2", "text"],
+                alpha=0.5
+            )
             .with_near_text({
-                "concepts": [text.searchString]
+                "concepts": [text.searchString],
+                "distance": max_distance
             })
             .with_additional("id")
-            .with_limit(3)
             .do()
         )
     for i in range(len(response["data"]["Get"]["Article"])):
@@ -127,6 +137,21 @@ async def ask_question(question: Question):
     return formatted_result
 
 
+@router.post("/send-request", response_model= UserRequestGet)
+def send_request(request: UserRequestAdd):
+    request_object = {
+        "requestText": request.requestText
+    }
+    result = client.data_object.create(
+        data_object=request_object,
+        class_name="Request"
+    )
+
+    return UserRequestGet(
+        id=result,
+        requestText=request.requestText
+    )
+
 def format_zakat_response(response: str) -> str:
     try:
         lines = response.split("\\n")
@@ -135,3 +160,6 @@ def format_zakat_response(response: str) -> str:
         return formatted_text
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error formatting response: {str(e)}")
+
+
+

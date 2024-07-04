@@ -1,4 +1,4 @@
-from src.knowledge_base.models import ArticleGet, ArticleAdd, Content
+from src.knowledge_base.models import ArticleGet, ArticleAdd, Content, UserRequestGet
 from typing import List, Dict, Optional, Any
 from src.weaviate_client import client
 from pydantic import BaseModel
@@ -88,3 +88,65 @@ async def edit_article(article: ArticleAdd, article_id: str):
         text=article.text,
         content=article.content
     )
+
+
+def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+    query = (
+        client.query.get(
+            collection_name,
+            ["requestText"]
+        )
+        .with_additional(["id"])
+        .with_limit(batch_size)
+    )
+    if cursor is not None:
+        result = query.with_after(cursor).do()
+    else:
+        result = query.do()
+    return result["data"]["Get"][collection_name]
+
+
+def parse_requests(data: List[Dict]) -> List[UserRequestGet]:
+    requests = []
+    for item in data:
+        request = UserRequestGet(
+            id=item['_additional']['id'],
+            requestText=item['requestText']
+        )
+        requests.append(request)
+    return requests
+
+
+@router.get("/get-requests", response_model=List[UserRequestGet])
+async def get_articles():
+    cursor = None
+    requests_unformatted = []
+    while True:
+        next_batch = get_batch_with_cursor("Request", 100, cursor)
+        if len(next_batch) == 0:
+            break
+        requests_unformatted.extend(next_batch)
+        cursor = next_batch[-1]["_additional"]["id"]
+    requests_output = parse_requests(requests_unformatted)
+    return requests_output
+
+
+@router.get("/get-requests/{request_id}", response_model=UserRequestGet)
+async def get_request(request_id: str):
+    request_object = client.data_object.get_by_id(
+        request_id,
+        class_name="Request"
+    )
+    return UserRequestGet(id=request_object["id"], requestText=request_object["properties"]["requestText"])
+
+@router.delete("/delete-request/{request_id}", response_model=UserRequestGet)
+async def delete_request(request_id: str):
+    request_object = client.data_object.get_by_id(
+        request_id,
+        class_name="Request"
+    )
+    client.data_object.delete(
+        request_id,
+        class_name="Request",
+    )
+    return UserRequestGet(id=request_object["id"], requestText=request_object["properties"]["requestText"])

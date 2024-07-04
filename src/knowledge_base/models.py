@@ -34,5 +34,14 @@ class ArticleGet(BaseModel):
     content: Content
 
 
+class UserRequestAdd(BaseModel):
+    requestText: str
+
+
+class UserRequestGet(BaseModel):
+    id: str
+    requestText: str
+
+
 class Question(BaseModel):
     question: str

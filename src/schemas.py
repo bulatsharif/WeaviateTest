@@ -129,3 +129,14 @@ class_news = {
     ],
     "vectorizer": "none"
 }
+
+class_requests = {
+    "class": "Request",
+    "properties": [
+        {
+            "name": "requestText",
+            "dataType": ["text"]
+        }
+    ],
+    "vectorizer": "none"
+}

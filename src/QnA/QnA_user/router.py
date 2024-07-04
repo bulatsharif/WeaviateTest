@@ -74,56 +74,41 @@ async def search_question(text: SearchInput):
     max_distance = 0.26
     if text.searchString == "":
         return await get_questions()
-    # response = (
-    #     client.query
-    #     .get("Question", ["question", "answer", "tags"])
-    #     .with_hybrid(
-    #         query=text.searchString,
-    #         properties=["tags^2", "question", "answer"],
-    #         alpha=0.25
-    #     )
-    #     .with_additional(["score", "explainScore"])
-    #     .with_additional("id")
-    #     .do()
-    # )
-    # print(response)
     response = (
         client.query
         .get("Question", ["question", "answer", "tags"])
+        .with_hybrid(
+            query=text.searchString,
+            properties=["tags^3", "question^2", "answer"],
+            alpha=0.5
+        )
         .with_near_text({
             "concepts": [text.searchString],
             "distance": max_distance
+
         })
+        .with_additional(["score", "explainScore"])
         .with_additional("id")
         .do()
     )
+
     questions = []
     if len(response["data"]["Get"]["Question"]) < 3:
         response = (
             client.query
             .get("Question", ["question", "answer", "tags"])
+            .with_hybrid(
+                query=text.searchString,
+                properties=["tags^3", "question^2", "answer"],
+                alpha=0.5
+            )
             .with_near_text({
-                "concepts": [text.searchString]
+                "concepts": [text.searchString],
             })
             .with_additional("id")
             .with_limit(3)
             .do()
         )
-        # response = (
-        #     client.query
-        #     .get("Question", ["question", "answer", "tags"])
-        #     .with_hybrid(
-        #         query=text.searchString,
-        #         properties=["tags^3", "question^2", "answer"],
-        #         alpha=0.5
-        #     )
-        #     .with_near_text({
-        #         "concepts": [text.searchString],
-        #     })
-        #     .with_additional("id")
-        #     .with_limit(3)
-        #     .do()
-        # )
     for i in range(len(response["data"]["Get"]["Question"])):
         questions.append(QuestionGet(
             id=response["data"]["Get"]["Question"][i]["_additional"]["id"],

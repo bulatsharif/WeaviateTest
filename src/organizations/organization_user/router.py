@@ -1,5 +1,7 @@
 from typing import List, Dict
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from pydantic import validator
+
 from src.organizations.models import OrganizationGet, OrganizationSearch
 from src.weaviate_client import client
 
@@ -72,27 +74,41 @@ async def get_organization(organization_id: str):
 
 @router.post("/search-organization/", response_model=List[OrganizationGet])
 async def get_organization_search(orgSearch: OrganizationSearch):
-    response =(
-        client.query
-        .get("Organization", ["name", "link", "description", "logo_link", "categories", "countries"])
-        .with_where({
-            "operator" : "And",
-            "operands": [
-                {
-                    "path": ["categories"],
-                    "operator": "ContainsAny",
-                    "valueText": orgSearch.categories
-                },
-                {
-                    "path": ["countries"],
-                    "operator": "ContainsAny",
-                    "valueText": orgSearch.countries
-                }
-            ]
+    filters = []
+
+    if orgSearch.categories and len(orgSearch.categories) > 0:
+        filters.append({
+            "path": ["categories"],
+            "operator": "ContainsAny",
+            "valueText": orgSearch.categories
         })
-        .with_additional("id")
-        .do()
-    )
+
+    if orgSearch.countries and len(orgSearch.countries) > 0:
+        filters.append({
+            "path": ["countries"],
+            "operator": "ContainsAny",
+            "valueText": orgSearch.countries
+        })
+
+    print(filters)
+
+    if not filters:
+        raise HTTPException(status_code=422, detail="Neither organization nor categories were specified")
+
+    query = client.query.get("Organization", ["name", "link", "description", "logo_link", "categories", "countries"])
+
+    if len(filters) == 1:
+        query = query.with_where(filters[0])
+    else:
+        query = query.with_where({
+            "operator": "And",
+            "operands": filters
+        })
+
+    query = query.with_additional("id")
+    response = query.do()
+
+
     organizations = []
     for i in range(len(response["data"]["Get"]["Organization"])):
         organizations.append(OrganizationGet(

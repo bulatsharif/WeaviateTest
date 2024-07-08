@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, validator
 
 
 class OrganizationAdd(BaseModel):
@@ -22,5 +22,6 @@ class OrganizationGet(BaseModel):
     countries: List[str]
 
 class OrganizationSearch(BaseModel):
-    categories: List[str]
-    countries: List[str]
+    categories: List[str] = []
+    countries: List[str] = []
+

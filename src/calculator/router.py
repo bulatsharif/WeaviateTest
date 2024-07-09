@@ -1,4 +1,4 @@
-from src.calculator.utility.nisab_api_client import fetch_silver_value, convert_currency
+from src.calculator.utility.nisab_api_client import fetch_silver_value, convert_currency, fetch_gold_value
 from src.calculator.utility.nisab_on_livestock_calculation import (calculate_goats, calculate_sheep,
                                                                    calculate_buffaloes,
                                                                    calculate_cows, calculate_camels, calculate_horses)
@@ -41,73 +41,62 @@ currencies = {
 async def calculate_zakat_on_property(property: ZakatOnProperty):
     savings_value = 0
 
-    for item in property.cash:
+    async def handle_conversion(item, default_currency):
         if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+            item.currency_code = default_currency
+        value = await convert_currency(property.currency, item.currency_code, item.value)
+        return value
+
+    async def handle_gold_silver(item, default_currency, fetch_value_function, measurement_unit):
+        if item.currency_code not in currencies:
+            item.currency_code = default_currency
+        if measurement_unit == 'kg':
+            item.value *= 1000
+        elif measurement_unit == 'oz':
+            item.value *= 28.34
+        value_in_currency = item.value * await fetch_value_function(property.currency)
+        return await convert_currency(property.currency, item.currency_code, value_in_currency)
+
+    for item in property.cash:
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.cash_on_bank_cards:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.silver_jewelry:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_gold_silver(item, property.currency, fetch_silver_value,
+                                                  property.measurement_unit_silver)
 
     for item in property.gold_jewelry:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_gold_silver(item, property.currency, fetch_gold_value,
+                                                  property.measurement_unit_gold)
 
     for item in property.purchased_product_for_resaling:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.unfinished_product:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.produced_product_for_resaling:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.purchased_not_for_resaling:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.used_after_nisab:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.rent_money:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
     for item in property.stocks_for_resaling:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
-    # income_from_stocks
     for item in property.income_from_stocks:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value += await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value += await handle_conversion(item, property.currency)
 
-    # taxes_value
     for item in property.taxes_value:
-        if item.currency_code not in currencies:
-            item.currency_code = property.currency
-        savings_value -= await convert_currency(property.currency, item.currency_code, item.value)
+        savings_value -= await handle_conversion(item, property.currency)
 
     zakat_value = savings_value * 0.025
     if zakat_value == 0:
@@ -115,12 +104,13 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
 
     silver_price = await fetch_silver_value(property.currency)
     nisab_value = int(silver_price * 612.35)
-    if savings_value > nisab_value:
-        nisab_value_bool = True
-    else:
-        nisab_value_bool = False
-    calculated_value = ZakatOnPropertyCalculated(zakat_value=zakat_value, nisab_value=nisab_value_bool)
-    calculated_value.currency = property.currency
+    nisab_value_bool = savings_value > nisab_value
+
+    calculated_value = ZakatOnPropertyCalculated(
+        zakat_value=zakat_value,
+        nisab_value=nisab_value_bool,
+        currency=property.currency
+    )
     return calculated_value
 
 

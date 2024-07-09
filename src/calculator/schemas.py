@@ -2,10 +2,28 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+from typing import List, Optional
+from pydantic import BaseModel
+
 class ZakatOnPropertyItem(BaseModel):
     currency_code: Optional[str]
-    value: Optional[int]
+    value: Optional[float]
+    unit: Optional[str]  # Add unit field
 
+from typing import List, Optional
+from pydantic import BaseModel
+
+class ZakatOnPropertyItem(BaseModel):
+    currency_code: Optional[str]
+    value: Optional[float]
+    measurement_unit: Optional[str] = 'g'  # default to grams
+
+from typing import List, Optional
+from pydantic import BaseModel
+
+class ZakatOnPropertyItem(BaseModel):
+    currency_code: Optional[str]
+    value: Optional[float]
 
 class ZakatOnProperty(BaseModel):
     cash: Optional[List[ZakatOnPropertyItem]]
@@ -22,9 +40,13 @@ class ZakatOnProperty(BaseModel):
     income_from_stocks: Optional[List[ZakatOnPropertyItem]]
     taxes_value: Optional[List[ZakatOnPropertyItem]]
     currency: str = "RUB"
+    measurement_unit_silver: Optional[str] = 'g'  # default to grams
+    measurement_unit_gold: Optional[str] = 'g'  # default to grams
 
     class Config:
         orm_mode = True
+
+
 
 
 class ZakatOnPropertyCalculated(BaseModel):

@@ -1,6 +1,11 @@
 from src.calculator.schemas import Animal
 from typing import List
 
+"""
+This files handles a lot "if-else" in order to calculate Zakat on Livestock
+The only purpose is to calculate Zakat.
+
+"""
 
 def calculate_camels(camels: int) -> List[Animal]:
     calculated_animals = []

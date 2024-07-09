@@ -10,8 +10,18 @@ router = APIRouter(
     tags=["Organizations"]
 )
 
+def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
 
-def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -26,8 +36,16 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
         result = query.do()
     return result["data"]["Get"][collection_name]
 
-
 def parse_organizations(data: List[Dict]) -> List[OrganizationGet]:
+    """
+    Parse a list of objects into a list of OrganizationGet models.
+
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - List[OrganizationGet]: A list of parsed OrganizationGet models.
+    """
     organizations = []
     for item in data:
         organization = OrganizationGet(
@@ -42,9 +60,16 @@ def parse_organizations(data: List[Dict]) -> List[OrganizationGet]:
         organizations.append(organization)
     return organizations
 
-
-@router.get("/get-organizations", response_model=List[OrganizationGet])
+@router.get("/get-organizations", response_model=List[OrganizationGet], summary="Get all organizations")
 async def get_organizations():
+    """
+    Retrieve a list of all organizations.
+
+    This endpoint fetches all the organizations in the collection, handling pagination internally.
+
+    Returns:
+    - List[OrganizationGet]: A list of all organizations.
+    """
     cursor = None
     organizations_unformatted = []
     while True:
@@ -57,9 +82,17 @@ async def get_organizations():
     organizations_output = parse_organizations(organizations_unformatted)
     return organizations_output
 
-
-@router.get("/get-organization/{organization_id}", response_model=OrganizationGet)
+@router.get("/get-organization/{organization_id}", response_model=OrganizationGet, summary="Get a specific organization by ID")
 async def get_organization(organization_id: str):
+    """
+    Retrieve details of a specific organization by its ID.
+
+    Parameters:
+    - organization_id (str): The ID of the organization to retrieve.
+
+    Returns:
+    - OrganizationGet: The details of the specified organization.
+    """
     organization_object = client.data_object.get_by_id(
         organization_id,
         class_name="Organization"
@@ -71,9 +104,20 @@ async def get_organization(organization_id: str):
                            categories=organization_object["properties"]["categories"],
                            countries=organization_object["properties"]["countries"])
 
-
-@router.post("/search-organization/", response_model=List[OrganizationGet])
+@router.post("/search-organization/", response_model=List[OrganizationGet], summary="Search for organizations")
 async def get_organization_search(orgSearch: OrganizationSearch):
+    """
+    Search for organizations by categories and/or countries.
+
+    Parameters:
+    - orgSearch (OrganizationSearch): The search criteria including categories and countries.
+
+    Returns:
+    - List[OrganizationGet]: A list of organizations matching the search criteria.
+
+    Raises:
+    - HTTPException: If neither categories nor countries are specified.
+    """
     filters = []
 
     if orgSearch.categories and len(orgSearch.categories) > 0:
@@ -90,8 +134,6 @@ async def get_organization_search(orgSearch: OrganizationSearch):
             "valueText": orgSearch.countries
         })
 
-    print(filters)
-
     if not filters:
         raise HTTPException(status_code=422, detail="Neither organization nor categories were specified")
 
@@ -107,7 +149,6 @@ async def get_organization_search(orgSearch: OrganizationSearch):
 
     query = query.with_additional("id")
     response = query.do()
-
 
     organizations = []
     for i in range(len(response["data"]["Get"]["Organization"])):

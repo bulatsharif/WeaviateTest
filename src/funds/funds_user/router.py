@@ -8,8 +8,18 @@ router = APIRouter(
     tags=["Verified Charity Fund"]
 )
 
+def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
 
-def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -24,8 +34,16 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
         result = query.do()
     return result["data"]["Get"][collection_name]
 
-
 def parse_funds(data: List[Dict]) -> List[FundGet]:
+    """
+    Parse a list of objects into a list of FundGet models.
+
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - List[FundGet]: A list of parsed FundGet models.
+    """
     funds = []
     for item in data:
         fund = FundGet(
@@ -38,9 +56,16 @@ def parse_funds(data: List[Dict]) -> List[FundGet]:
         funds.append(fund)
     return funds
 
-
-@router.get("/get-funds", response_model=List[FundGet])
+@router.get("/get-funds", response_model=List[FundGet], deprecated=True)
 async def get_funds():
+    """
+    Retrieve a list of all verified charity funds.
+
+    This endpoint fetches all the charity funds in the collection, handling pagination internally.
+
+    Returns:
+    - List[FundGet]: A list of all verified charity funds.
+    """
     cursor = None
     funds_unformatted = []
     while True:
@@ -53,9 +78,17 @@ async def get_funds():
     funds_output = parse_funds(funds_unformatted)
     return funds_output
 
-
-@router.get("/get-fund/{fund_id}", response_model=FundGet)
+@router.get("/get-fund/{fund_id}", response_model=FundGet, deprecated=True)
 async def get_fund(fund_id: str):
+    """
+    Retrieve details of a specific charity fund by its ID.
+
+    Parameters:
+    - fund_id (str): The ID of the charity fund to retrieve.
+
+    Returns:
+    - FundGet: The details of the specified charity fund.
+    """
     fund_object = client.data_object.get_by_id(
         fund_id,
         class_name="Fund"

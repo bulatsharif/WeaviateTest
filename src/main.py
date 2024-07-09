@@ -13,7 +13,7 @@ from src.news.news_editor.router import router as router_news_editor
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title="Zakat Barakat API")
 
 app.add_middleware(
     CORSMiddleware,

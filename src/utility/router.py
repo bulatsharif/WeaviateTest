@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Set
 from fastapi import APIRouter
 from src.weaviate_client import client
 
@@ -7,8 +7,18 @@ router = APIRouter(
     tags=["Utility"]
 )
 
+def get_batch_with_cursor_categories(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
 
-def get_batch_with_cursor_categories(collection_name, batch_size, cursor=None):
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -23,18 +33,32 @@ def get_batch_with_cursor_categories(collection_name, batch_size, cursor=None):
         result = query.do()
     return result["data"]["Get"][collection_name]
 
+def parse_categories(data: List[Dict]) -> Set[str]:
+    """
+    Parse a list of objects to extract unique categories.
 
-def parse_categories(data: List[Dict]):
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - Set[str]: A set of unique categories.
+    """
     categories_set = set()
-    categories = []
     for item in data:
         for category in item["categories"]:
             categories_set.add(category)
     return categories_set
 
-
-@router.get("/get-categories")
+@router.get("/get-categories", summary="Get all unique categories")
 async def get_categories():
+    """
+    Retrieve a list of all unique categories from the organizations.
+
+    This endpoint fetches all the categories from the organizations, handling pagination internally.
+
+    Returns:
+    - Set[str]: A set of all unique categories.
+    """
     cursor = None
     organizations_unformatted = []
     while True:
@@ -47,8 +71,18 @@ async def get_categories():
     categories_output = parse_categories(organizations_unformatted)
     return categories_output
 
+def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
 
-def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -63,17 +97,32 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
         result = query.do()
     return result["data"]["Get"][collection_name]
 
+def parse_countries(data: List[Dict]) -> Set[str]:
+    """
+    Parse a list of objects to extract unique countries.
 
-def parse_countries(data: List[Dict]):
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - Set[str]: A set of unique countries.
+    """
     countries_set = set()
     for item in data:
         for country in item["countries"]:
             countries_set.add(country)
     return countries_set
 
-
-@router.get("/get-countries")
+@router.get("/get-countries", summary="Get all unique countries")
 async def get_countries():
+    """
+    Retrieve a list of all unique countries from the organizations.
+
+    This endpoint fetches all the countries from the organizations, handling pagination internally.
+
+    Returns:
+    - Set[str]: A set of all unique countries.
+    """
     cursor = None
     organizations_unformatted = []
     while True:

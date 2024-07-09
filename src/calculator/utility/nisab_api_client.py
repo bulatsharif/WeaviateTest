@@ -2,6 +2,11 @@ from metalpriceapi.client import Client
 from dotenv import load_dotenv
 import os
 
+"""
+This file is utility files that is used to proceed with Zakat on Property calculation
+It receives a current rates of currencies and gold/silver
+"""
+
 load_dotenv('.env')
 
 API_KEY: str = os.getenv("METAL_PRICE_API_KEY")

@@ -1,7 +1,6 @@
 from src.knowledge_base.models import ArticleGet, ArticleAdd, Content, UserRequestGet
-from typing import List, Dict, Optional, Any
+from typing import List, Dict
 from src.weaviate_client import client
-from pydantic import BaseModel
 from fastapi import APIRouter
 import json
 
@@ -10,16 +9,17 @@ router = APIRouter(
     tags=["Knowledge Base Editor"]
 )
 
-
-class MarkdownContent(BaseModel):
-    content: Dict[str, Any]
-    tags: List[str] = []
-    title: Optional[str] = None
-    text: Optional[str] = None
-
-
-@router.post("/create-article/", response_model=ArticleGet)
+@router.post("/create-article/", response_model=ArticleGet, summary="Create a new article")
 async def create_article(article: ArticleAdd):
+    """
+    Create a new article in the knowledge base.
+
+    Parameters:
+    - article (ArticleAdd): The article data to be added.
+
+    Returns:
+    - ArticleGet: The created article with its ID.
+    """
     content_dict = article.content.dict()
     content_json = json.dumps(content_dict)
     article_object = {
@@ -43,8 +43,17 @@ async def create_article(article: ArticleAdd):
     )
 
 
-@router.delete("/delete-article/{article_id}", response_model=ArticleGet)
+@router.delete("/delete-article/{article_id}", response_model=ArticleGet, summary="Delete an existing article")
 async def delete_article(article_id: str):
+    """
+    Delete an existing article by its ID.
+
+    Parameters:
+    - article_id (str): The ID of the article to be deleted.
+
+    Returns:
+    - ArticleGet: The deleted article's details.
+    """
     article_object = client.data_object.get_by_id(
         article_id,
         class_name="Article"
@@ -63,8 +72,18 @@ async def delete_article(article_id: str):
                       content=parsed_content)
 
 
-@router.put("/edit-article/{article_id}", response_model=ArticleGet)
+@router.put("/edit-article/{article_id}", response_model=ArticleGet, summary="Edit an existing article")
 async def edit_article(article: ArticleAdd, article_id: str):
+    """
+    Edit an existing article by its ID.
+
+    Parameters:
+    - article (ArticleAdd): The new article data to be updated.
+    - article_id (str): The ID of the article to be edited.
+
+    Returns:
+    - ArticleGet: The updated article's details.
+    """
     content_dict = article.content.dict()
     content_json = json.dumps(content_dict)
 
@@ -90,7 +109,18 @@ async def edit_article(article: ArticleAdd, article_id: str):
     )
 
 
-def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
+
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -107,6 +137,15 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
 
 
 def parse_requests(data: List[Dict]) -> List[UserRequestGet]:
+    """
+    Parse a list of objects into a list of UserRequestGet models.
+
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - List[UserRequestGet]: A list of parsed UserRequestGet models.
+    """
     requests = []
     for item in data:
         request = UserRequestGet(
@@ -117,8 +156,16 @@ def parse_requests(data: List[Dict]) -> List[UserRequestGet]:
     return requests
 
 
-@router.get("/get-requests", response_model=List[UserRequestGet])
+@router.get("/get-requests", response_model=List[UserRequestGet], summary="Get a list of all user requests")
 async def get_articles():
+    """
+    Retrieve a list of all user requests.
+
+    This endpoint fetches all the user requests in the collection, handling pagination internally.
+
+    Returns:
+    - List[UserRequestGet]: A list of all user requests.
+    """
     cursor = None
     requests_unformatted = []
     while True:
@@ -131,16 +178,35 @@ async def get_articles():
     return requests_output
 
 
-@router.get("/get-requests/{request_id}", response_model=UserRequestGet)
+@router.get("/get-requests/{request_id}", response_model=UserRequestGet, summary="Get a specific user request by ID")
 async def get_request(request_id: str):
+    """
+    Retrieve details of a specific user request by its ID.
+
+    Parameters:
+    - request_id (str): The ID of the user request to retrieve.
+
+    Returns:
+    - UserRequestGet: The details of the specified user request.
+    """
     request_object = client.data_object.get_by_id(
         request_id,
         class_name="Request"
     )
     return UserRequestGet(id=request_object["id"], requestText=request_object["properties"]["requestText"])
 
-@router.delete("/delete-request/{request_id}", response_model=UserRequestGet)
+
+@router.delete("/delete-request/{request_id}", response_model=UserRequestGet, summary="Delete a user request by ID")
 async def delete_request(request_id: str):
+    """
+    Delete a user request by its ID.
+
+    Parameters:
+    - request_id (str): The ID of the user request to be deleted.
+
+    Returns:
+    - UserRequestGet: The deleted user request's details.
+    """
     request_object = client.data_object.get_by_id(
         request_id,
         class_name="Request"

@@ -2,8 +2,6 @@ from dotenv import load_dotenv
 import weaviate
 import os
 
-from src.schemas import class_organization, class_news, class_requests
-
 load_dotenv('.env')
 
 jinaApi: str = os.getenv("JINA_AI_API_KEY")
@@ -18,11 +16,3 @@ client = weaviate.Client(
     }
 )
 
-if not client.schema.exists("Organization"):
-    client.schema.create_class(class_organization)
-
-if not client.schema.exists("News"):
-    client.schema.create_class(class_news)
-
-if not client.schema.exists("Request"):
-    client.schema.create_class(class_requests)

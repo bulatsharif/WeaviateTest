@@ -1,39 +1,23 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-
-from typing import List, Optional
-from pydantic import BaseModel
-
 class ZakatOnPropertyItem(BaseModel):
     currency_code: Optional[str]
     value: Optional[float]
-    unit: Optional[str]  # Add unit field
 
-from typing import List, Optional
-from pydantic import BaseModel
-
-class ZakatOnPropertyItem(BaseModel):
-    currency_code: Optional[str]
-    value: Optional[float]
-    measurement_unit: Optional[str] = 'g'  # default to grams
-
-from typing import List, Optional
-from pydantic import BaseModel
-
-class ZakatOnPropertyItem(BaseModel):
-    currency_code: Optional[str]
-    value: Optional[float]
 
 class ZakatOnPropertySilver(BaseModel):
     measurement_unit: Optional[str] = 'g'  # default to grams
     value: Optional[float]
     qarat: Optional[str] = '999'  # default to pure silver
 
+
 class ZakatOnPropertyGold(BaseModel):
     measurement_unit: Optional[str] = 'g'  # default to grams
     value: Optional[float]
     qarat: Optional[str] = '999'  # default to pure gold
+
+
 class ZakatOnProperty(BaseModel):
     cash: Optional[List[ZakatOnPropertyItem]]
     cash_on_bank_cards: Optional[List[ZakatOnPropertyItem]]
@@ -49,10 +33,9 @@ class ZakatOnProperty(BaseModel):
     income_from_stocks: Optional[List[ZakatOnPropertyItem]]
     taxes_value: Optional[List[ZakatOnPropertyItem]]
     currency: str = "RUB"
+
     class Config:
         orm_mode = True
-
-
 
 
 class ZakatOnPropertyCalculated(BaseModel):
@@ -81,6 +64,9 @@ class Animal(BaseModel):
 
 class ZakatOnLiveStockResponse(BaseModel):
     animals: List[Animal]
+    """
+    Horses are separate since Zakat for horses calculates by money, not the animal itself
+    """
     value_for_horses: int
     nisab_status: bool
 

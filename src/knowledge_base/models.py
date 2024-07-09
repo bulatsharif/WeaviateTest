@@ -7,11 +7,19 @@ class Attributes(RootModel):
 
 
 class Ops(BaseModel):
+    """
+    Used to keep the markdown formatting within the article
+    insert - the text
+    attributes - formatting
+    """
     insert: str
     attributes: Optional[Attributes] = None
 
 
 class Content(BaseModel):
+    """
+    Markdown Content
+    """
     ops: List[Ops]
 
 
@@ -45,3 +53,6 @@ class UserRequestGet(BaseModel):
 
 class Question(BaseModel):
     question: str
+
+
+

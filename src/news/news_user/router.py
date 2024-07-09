@@ -1,6 +1,5 @@
 from typing import List, Dict
 from fastapi import APIRouter
-
 from src.news.models import NewsGet
 from src.weaviate_client import client
 
@@ -9,8 +8,18 @@ router = APIRouter(
     tags=["News"]
 )
 
+def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
+    """
+    Retrieve a batch of objects from the collection with optional cursor for pagination.
 
-def get_batch_with_cursor(collection_name, batch_size, cursor=None):
+    Parameters:
+    - collection_name (str): The name of the collection to query.
+    - batch_size (int): The number of items to retrieve in each batch.
+    - cursor (str, optional): The cursor for pagination. If None, fetch from the start.
+
+    Returns:
+    - List[Dict]: A list of objects from the collection.
+    """
     query = (
         client.query.get(
             collection_name,
@@ -25,8 +34,16 @@ def get_batch_with_cursor(collection_name, batch_size, cursor=None):
         result = query.do()
     return result["data"]["Get"][collection_name]
 
-
 def parse_news(data: List[Dict]) -> List[NewsGet]:
+    """
+    Parse a list of objects into a list of NewsGet models.
+
+    Parameters:
+    - data (List[Dict]): The list of objects to parse.
+
+    Returns:
+    - List[NewsGet]: A list of parsed NewsGet models.
+    """
     news = []
     for item in data:
         one_news = NewsGet(
@@ -40,9 +57,16 @@ def parse_news(data: List[Dict]) -> List[NewsGet]:
         news.append(one_news)
     return news
 
-
-@router.get("/get-news", response_model=List[NewsGet])
+@router.get("/get-news", response_model=List[NewsGet], summary="Get all news articles")
 async def get_news():
+    """
+    Retrieve a list of all news articles.
+
+    This endpoint fetches all the news articles in the collection, handling pagination internally.
+
+    Returns:
+    - List[NewsGet]: A list of all news articles.
+    """
     cursor = None
     news_unformatted = []
     while True:
@@ -55,15 +79,23 @@ async def get_news():
     news_output = parse_news(news_unformatted)
     return news_output
 
+@router.get("/get-news/{news_id}", response_model=NewsGet, summary="Get a specific news article by ID")
+async def get_news_article(news_id: str):
+    """
+    Retrieve details of a specific news article by its ID.
 
-@router.get("/get-news/{news_id}", response_model=NewsGet)
-async def get_news_article(news_article_id: str):
+    Parameters:
+    - news_id (str): The ID of the news article to retrieve.
+
+    Returns:
+    - NewsGet: The details of the specified news article.
+    """
     news_article_object = client.data_object.get_by_id(
-        news_article_id,
+        news_id,
         class_name="News"
     )
     return NewsGet(id=news_article_object["id"], name=news_article_object["properties"]["name"],
-                           body=news_article_object["properties"]["body"],
-                           image_link=news_article_object["properties"]["image_link"],
-                           source_link=news_article_object["properties"]["source_link"],
-                           tags=news_article_object["properties"]["tags"])
+                   body=news_article_object["properties"]["body"],
+                   image_link=news_article_object["properties"]["image_link"],
+                   source_link=news_article_object["properties"]["source_link"],
+                   tags=news_article_object["properties"]["tags"])

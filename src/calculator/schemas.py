@@ -26,13 +26,14 @@ class ZakatOnPropertyItem(BaseModel):
     value: Optional[float]
 
 class ZakatOnPropertySilver(BaseModel):
-    measurement_code: Optional[str] = 'g'  # default to grams
+    measurement_unit: Optional[str] = 'g'  # default to grams
     value: Optional[float]
+    qarat: Optional[str] = '999'  # default to pure silver
 
 class ZakatOnPropertyGold(BaseModel):
-    measurement_code: Optional[str] = 'g'  # default to grams
+    measurement_unit: Optional[str] = 'g'  # default to grams
     value: Optional[float]
-
+    qarat: Optional[str] = '999'  # default to pure gold
 class ZakatOnProperty(BaseModel):
     cash: Optional[List[ZakatOnPropertyItem]]
     cash_on_bank_cards: Optional[List[ZakatOnPropertyItem]]

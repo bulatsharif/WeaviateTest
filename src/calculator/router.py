@@ -36,6 +36,47 @@ currencies = {
     'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF', 'XPF', 'XRP', 'YER', 'ZAR', 'ZMK', 'ZMW'
 }
 
+GOLD_PURITY_MULTIPLIERS = {
+    '375/9K': 0.35,
+    '500/12K': 0.464,
+    '583/585/14K': 0.56,
+    '750/18K': 0.72,
+    '850/21K': 0.8,
+    '900/916/22K': 0.864,
+    '958': 0.91,
+    '999/24K': 1.0,
+}
+
+SILVER_PURITY_MULTIPLIERS = {
+    '600': 0.3,
+    '750': 0.5,
+    '800': 0.66,
+    '875/884': 0.84,
+    '900/925': 0.9,
+    '999': 1.0,
+}
+
+async def handle_gold(item, fetch_value_function, currency):
+    if item.measurement_unit == 'kg':
+        item.value *= 1000
+    elif item.measurement_unit == 'oz':
+        item.value *= 31.1035
+
+    # Adjust the value based on the purity
+    purity_factor = GOLD_PURITY_MULTIPLIERS.get(item.qarat, 1.0)
+    value_in_currency = item.value * await fetch_value_function(currency) * purity_factor
+    return value_in_currency
+
+async def handle_silver(item, fetch_value_function, currency):
+    if item.measurement_unit == 'kg':
+        item.value *= 1000
+    elif item.measurement_unit == 'oz':
+        item.value *= 31.1035
+
+    purity_factor = SILVER_PURITY_MULTIPLIERS.get(item.qarat, 1.0)
+    value_in_currency = item.value * await fetch_value_function(currency) * purity_factor
+    return value_in_currency
+
 
 @router.post("/zakat-property", response_model=ZakatOnPropertyCalculated)
 async def calculate_zakat_on_property(property: ZakatOnProperty):
@@ -47,14 +88,6 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
         value = await convert_currency(property.currency, item.currency_code, item.value)
         return value
 
-    async def handle_gold_silver(item, fetch_value_function):
-        if item.measurement_code == 'kg':
-            item.value *= 1000
-        elif item.measurement_code == 'oz':
-            item.value *= 31.1035
-        value_in_currency = item.value * await fetch_value_function(property.currency)
-        return value_in_currency
-
     for item in property.cash or []:
         savings_value += await handle_conversion(item, property.currency)
 
@@ -62,10 +95,10 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
         savings_value += await handle_conversion(item, property.currency)
 
     if property.silver_jewelry:
-        savings_value += await handle_gold_silver(property.silver_jewelry, fetch_silver_value)
+        savings_value += await handle_silver(property.silver_jewelry, fetch_silver_value, property.currency)
 
     if property.gold_jewelry:
-        savings_value += await handle_gold_silver(property.gold_jewelry, fetch_gold_value)
+        savings_value += await handle_gold(property.gold_jewelry, fetch_gold_value, property.currency)
 
     for item in property.purchased_product_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)
@@ -108,6 +141,7 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
         currency=property.currency
     )
     return calculated_value
+
 
 
 @router.post("/zakat-livestock", response_model=ZakatOnLiveStockResponse)

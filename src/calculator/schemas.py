@@ -25,11 +25,19 @@ class ZakatOnPropertyItem(BaseModel):
     currency_code: Optional[str]
     value: Optional[float]
 
+class ZakatOnPropertySilver(BaseModel):
+    measurement_code: Optional[str] = 'g'  # default to grams
+    value: Optional[float]
+
+class ZakatOnPropertyGold(BaseModel):
+    measurement_code: Optional[str] = 'g'  # default to grams
+    value: Optional[float]
+
 class ZakatOnProperty(BaseModel):
     cash: Optional[List[ZakatOnPropertyItem]]
     cash_on_bank_cards: Optional[List[ZakatOnPropertyItem]]
-    silver_jewelry: Optional[List[ZakatOnPropertyItem]]
-    gold_jewelry: Optional[List[ZakatOnPropertyItem]]
+    silver_jewelry: Optional[ZakatOnPropertySilver]
+    gold_jewelry: Optional[ZakatOnPropertyGold]
     purchased_product_for_resaling: Optional[List[ZakatOnPropertyItem]]
     unfinished_product: Optional[List[ZakatOnPropertyItem]]
     produced_product_for_resaling: Optional[List[ZakatOnPropertyItem]]
@@ -40,9 +48,6 @@ class ZakatOnProperty(BaseModel):
     income_from_stocks: Optional[List[ZakatOnPropertyItem]]
     taxes_value: Optional[List[ZakatOnPropertyItem]]
     currency: str = "RUB"
-    measurement_unit_silver: Optional[str] = 'g'  # default to grams
-    measurement_unit_gold: Optional[str] = 'g'  # default to grams
-
     class Config:
         orm_mode = True
 

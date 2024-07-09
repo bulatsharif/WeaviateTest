@@ -47,55 +47,51 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
         value = await convert_currency(property.currency, item.currency_code, item.value)
         return value
 
-    async def handle_gold_silver(item, default_currency, fetch_value_function, measurement_unit):
-        if item.currency_code not in currencies:
-            item.currency_code = default_currency
-        if measurement_unit == 'kg':
+    async def handle_gold_silver(item, fetch_value_function):
+        if item.measurement_code == 'kg':
             item.value *= 1000
-        elif measurement_unit == 'oz':
-            item.value *= 28.34
+        elif item.measurement_code == 'oz':
+            item.value *= 31.1035
         value_in_currency = item.value * await fetch_value_function(property.currency)
-        return await convert_currency(property.currency, item.currency_code, value_in_currency)
+        return value_in_currency
 
-    for item in property.cash:
+    for item in property.cash or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.cash_on_bank_cards:
+    for item in property.cash_on_bank_cards or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.silver_jewelry:
-        savings_value += await handle_gold_silver(item, property.currency, fetch_silver_value,
-                                                  property.measurement_unit_silver)
+    if property.silver_jewelry:
+        savings_value += await handle_gold_silver(property.silver_jewelry, fetch_silver_value)
 
-    for item in property.gold_jewelry:
-        savings_value += await handle_gold_silver(item, property.currency, fetch_gold_value,
-                                                  property.measurement_unit_gold)
+    if property.gold_jewelry:
+        savings_value += await handle_gold_silver(property.gold_jewelry, fetch_gold_value)
 
-    for item in property.purchased_product_for_resaling:
+    for item in property.purchased_product_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.unfinished_product:
+    for item in property.unfinished_product or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.produced_product_for_resaling:
+    for item in property.produced_product_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.purchased_not_for_resaling:
+    for item in property.purchased_not_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.used_after_nisab:
+    for item in property.used_after_nisab or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.rent_money:
+    for item in property.rent_money or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.stocks_for_resaling:
+    for item in property.stocks_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.income_from_stocks:
+    for item in property.income_from_stocks or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    for item in property.taxes_value:
+    for item in property.taxes_value or []:
         savings_value -= await handle_conversion(item, property.currency)
 
     zakat_value = savings_value * 0.025

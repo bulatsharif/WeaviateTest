@@ -1,3 +1,7 @@
+from io import BytesIO
+
+import requests
+from PIL import Image
 from fastapi import APIRouter, HTTPException
 
 from src.news.models import NewsGet, NewsAdd
@@ -33,9 +37,7 @@ async def create_news_article(news_article: NewsAdd):
     if len(news_article.tags) > 5:
         raise HTTPException(status_code=422, detail="No more than 5 tags allowed.")
 
-    if not news_article.image_link.startswith("data:image/"):
-        raise HTTPException(status_code=422,
-                            detail="Invalid link, follow the format: data:image/...")
+    validate_image(news_article.image_link)
 
     result = client.data_object.create(
         data_object=news_article_object,
@@ -105,9 +107,7 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
     if len(news_article.tags) > 5:
         raise HTTPException(status_code=422, detail="No more than 5 tags allowed.")
 
-    if not news_article.image_link.startswith("data:image/"):
-        raise HTTPException(status_code=422,
-                            detail="Invalid link, follow the format: data:image/...")
+    validate_image(news_article.image_link)
 
     result = client.data_object.replace(
         uuid=news_article_id,
@@ -123,3 +123,24 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
         source_link=news_article.source_link,
         tags=news_article.tags
     )
+
+def validate_image(url: str):
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=422, detail="Image URL is not accessible")
+
+        content_type = response.headers.get('Content-Type')
+        if not content_type or not content_type.startswith('image/'):
+            raise HTTPException(status_code=422, detail="URL does not point to an image")
+
+        try:
+            image = Image.open(BytesIO(response.content))
+            image.verify()
+        except (IOError, SyntaxError) as e:
+            raise HTTPException(status_code=422, detail="Image data is corrupted")
+
+        return {"message": "Image is valid"}
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=422, detail="An error occurred while fetching the image")

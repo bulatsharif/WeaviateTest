@@ -1,3 +1,6 @@
+from io import BytesIO
+from PIL import Image
+import requests
 from fastapi import APIRouter, HTTPException
 from src.organizations.models import OrganizationAdd, OrganizationGet
 from src.weaviate_client import client
@@ -21,6 +24,10 @@ async def create_organization(organization: OrganizationAdd):
     Raises:
     - HTTPException: If the logo link format is invalid.
     """
+
+    validate_image(organization.logo_link)
+
+
     organization_object = {
         "name": organization.name,
         "link": organization.link,
@@ -29,10 +36,6 @@ async def create_organization(organization: OrganizationAdd):
         "categories": organization.categories,
         "countries": organization.countries
     }
-
-    if not organization.logo_link.startswith("data:image/"):
-        raise HTTPException(status_code=422,
-                            detail="Invalid link, follow the format: data:image/...")
 
     result = client.data_object.create(
         data_object=organization_object,
@@ -89,6 +92,9 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
     Returns:
     - OrganizationGet: The updated organization's details.
     """
+
+    validate_image(organization.logo_link)
+
     organization_object = {
         "name": organization.name,
         "link": organization.link,
@@ -97,6 +103,8 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
         "categories": organization.categories,
         "countries": organization.countries,
     }
+
+
 
     result = client.data_object.replace(
         uuid=organization_id,
@@ -113,3 +121,24 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
         categories=organization.categories,
         countries=organization.countries
     )
+
+def validate_image(url: str):
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=422, detail="Image URL is not accessible")
+
+        content_type = response.headers.get('Content-Type')
+        if not content_type or not content_type.startswith('image/'):
+            raise HTTPException(status_code=422, detail="URL does not point to an image")
+
+        try:
+            image = Image.open(BytesIO(response.content))
+            image.verify()
+        except (IOError, SyntaxError) as e:
+            raise HTTPException(status_code=422, detail="Image data is corrupted")
+
+        return {"message": "Image is valid"}
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=422, detail="An error occurred while fetching the image")

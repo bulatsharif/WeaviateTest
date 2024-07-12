@@ -2,7 +2,7 @@ from typing import List, Dict
 from fastapi import APIRouter, HTTPException
 from pydantic import validator
 
-from src.organizations.models import OrganizationGet, OrganizationSearch
+from src.organizations.models import OrganizationGet, OrganizationSearch, SearchInput
 from src.weaviate_client import client
 
 router = APIRouter(
@@ -149,6 +149,35 @@ async def get_organization_search(orgSearch: OrganizationSearch):
 
     query = query.with_additional("id")
     response = query.do()
+
+    organizations = []
+    for i in range(len(response["data"]["Get"]["Organization"])):
+        organizations.append(OrganizationGet(
+            id=response["data"]["Get"]["Organization"][i]["_additional"]["id"],
+            name=response["data"]["Get"]["Organization"][i]["name"],
+            link=response["data"]["Get"]["Organization"][i]["link"],
+            description=response["data"]["Get"]["Organization"][i]["description"],
+            logo_link=response["data"]["Get"]["Organization"][i]["logo_link"],
+            countries=response["data"]["Get"]["Organization"][i]["countries"],
+            categories=response["data"]["Get"]["Organization"][i]["categories"]
+        ))
+    return organizations
+
+
+@router.post("/search-organization-by-name/", response_model=List[OrganizationGet], summary="Search for organizations")
+async def search_organizations_by_name(text: SearchInput):
+    if text.searchString == "":
+        return await get_organizations()
+    response = (
+        client.query
+        .get("Organization", ["name", "link", "description", "logo_link", "categories", "countries"])
+        .with_bm25(
+            query=text.searchString
+        )
+        .with_limit(text.limitOfNews)
+        .with_additional("id")
+        .do()
+    )
 
     organizations = []
     for i in range(len(response["data"]["Get"]["Organization"])):

@@ -19,3 +19,9 @@ class NewsGet(BaseModel):
     tags: List[str]
 
 
+class SearchInput(BaseModel):
+    searchString: str
+    limitOfNews: int
+
+
+

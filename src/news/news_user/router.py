@@ -1,12 +1,13 @@
 from typing import List, Dict
 from fastapi import APIRouter
-from src.news.models import NewsGet
+from src.news.models import NewsGet, SearchInput
 from src.weaviate_client import client
 
 router = APIRouter(
     prefix="/news",
     tags=["News"]
 )
+
 
 def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = None) -> List[Dict]:
     """
@@ -34,6 +35,7 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
         result = query.do()
     return result["data"]["Get"][collection_name]
 
+
 def parse_news(data: List[Dict]) -> List[NewsGet]:
     """
     Parse a list of objects into a list of NewsGet models.
@@ -57,6 +59,7 @@ def parse_news(data: List[Dict]) -> List[NewsGet]:
         news.append(one_news)
     return news
 
+
 @router.get("/get-news", response_model=List[NewsGet], summary="Get all news articles")
 async def get_news():
     """
@@ -79,6 +82,7 @@ async def get_news():
     news_output = parse_news(news_unformatted)
     return news_output
 
+
 @router.get("/get-news/{news_id}", response_model=NewsGet, summary="Get a specific news article by ID")
 async def get_news_article(news_id: str):
     """
@@ -99,3 +103,31 @@ async def get_news_article(news_id: str):
                    image_link=news_article_object["properties"]["image_link"],
                    source_link=news_article_object["properties"]["source_link"],
                    tags=news_article_object["properties"]["tags"])
+
+
+@router.post("/search-news/", response_model=List[NewsGet], summary="Search for news articles")
+async def search_news(text: SearchInput):
+    if text.searchString == "":
+        return await get_news()
+    response = (
+        client.query
+        .get("News", ["name", "body", "image_link", "source_link", "tags"])
+        .with_bm25(
+            query=text.searchString
+        )
+        .with_limit(text.limitOfNews)
+        .with_additional("id")
+        .do()
+    )
+
+    news_articles = []
+    for i in range(len(response["data"]["Get"]["News"])):
+        news_articles.append(NewsGet(
+            id=response["data"]["Get"]["News"][i]["_additional"]["id"],
+            name=response["data"]["Get"]["News"][i]["name"],
+            body=response["data"]["Get"]["News"][i]["body"],
+            image_link=response["data"]["Get"]["News"][i]["image_link"],
+            source_link=response["data"]["Get"]["News"][i]["source_link"],
+            tags=response["data"]["Get"]["News"][i]["tags"]
+        ))
+    return news_articles

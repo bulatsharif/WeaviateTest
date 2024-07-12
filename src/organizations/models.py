@@ -25,3 +25,6 @@ class OrganizationSearch(BaseModel):
     categories: List[str] = []
     countries: List[str] = []
 
+class SearchInput(BaseModel):
+    searchString: str
+    limitOfNews: int

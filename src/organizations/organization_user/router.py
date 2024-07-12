@@ -174,7 +174,7 @@ async def search_organizations_by_name(text: SearchInput):
         .with_bm25(
             query=text.searchString
         )
-        .with_limit(text.limitOfNews)
+        .with_limit(text.limitOfOrganizations)
         .with_additional("id")
         .do()
     )

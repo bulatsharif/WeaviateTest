@@ -81,6 +81,8 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
     silver_price = await fetch_silver_value(property.currency)
     nisab_value = int(silver_price * 612.35)
     nisab_value_bool = savings_value > nisab_value
+    if nisab_value_bool == False:
+        zakat_value = 0
 
     calculated_value = ZakatOnPropertyCalculated(
         zakat_value=zakat_value,

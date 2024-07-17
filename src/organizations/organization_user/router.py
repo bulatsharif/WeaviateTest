@@ -25,7 +25,7 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
     query = (
         client.query.get(
             collection_name,
-            ["name", "link", "description", "logo_link", "categories", "countries"]
+            ["name", "link", "description", "categories", "countries"]
         )
         .with_additional(["id"])
         .with_limit(batch_size)
@@ -53,7 +53,6 @@ def parse_organizations(data: List[Dict]) -> List[OrganizationGet]:
             name=item['name'],
             link=item['link'],
             description=item['description'],
-            logo_link=item['logo_link'],
             categories=item['categories'],
             countries=item['countries']
         )
@@ -100,7 +99,6 @@ async def get_organization(organization_id: str):
     return OrganizationGet(id=organization_object["id"], name=organization_object["properties"]["name"],
                            link=organization_object["properties"]["link"],
                            description=organization_object["properties"]["description"],
-                           logo_link=organization_object["properties"]["logo_link"],
                            categories=organization_object["properties"]["categories"],
                            countries=organization_object["properties"]["countries"])
 
@@ -137,7 +135,7 @@ async def get_organization_search(orgSearch: OrganizationSearch):
     if not filters:
         raise HTTPException(status_code=422, detail="Neither organization nor categories were specified")
 
-    query = client.query.get("Organization", ["name", "link", "description", "logo_link", "categories", "countries"])
+    query = client.query.get("Organization", ["name", "link", "description", "categories", "countries"])
 
     if len(filters) == 1:
         query = query.with_where(filters[0])
@@ -157,7 +155,6 @@ async def get_organization_search(orgSearch: OrganizationSearch):
             name=response["data"]["Get"]["Organization"][i]["name"],
             link=response["data"]["Get"]["Organization"][i]["link"],
             description=response["data"]["Get"]["Organization"][i]["description"],
-            logo_link=response["data"]["Get"]["Organization"][i]["logo_link"],
             countries=response["data"]["Get"]["Organization"][i]["countries"],
             categories=response["data"]["Get"]["Organization"][i]["categories"]
         ))
@@ -170,7 +167,7 @@ async def search_organizations_by_name(text: SearchInput):
         return await get_organizations()
     response = (
         client.query
-        .get("Organization", ["name", "link", "description", "logo_link", "categories", "countries"])
+        .get("Organization", ["name", "link", "description", "categories", "countries"])
         .with_bm25(
             query=text.searchString
         )
@@ -186,7 +183,6 @@ async def search_organizations_by_name(text: SearchInput):
             name=response["data"]["Get"]["Organization"][i]["name"],
             link=response["data"]["Get"]["Organization"][i]["link"],
             description=response["data"]["Get"]["Organization"][i]["description"],
-            logo_link=response["data"]["Get"]["Organization"][i]["logo_link"],
             countries=response["data"]["Get"]["Organization"][i]["countries"],
             categories=response["data"]["Get"]["Organization"][i]["categories"]
         ))

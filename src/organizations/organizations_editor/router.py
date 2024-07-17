@@ -25,14 +25,13 @@ async def create_organization(organization: OrganizationAdd):
     - HTTPException: If the logo link format is invalid.
     """
 
-    validate_image(organization.logo_link)
+    validate_link(organization.link)
 
 
     organization_object = {
         "name": organization.name,
         "link": organization.link,
         "description": organization.description,
-        "logo_link": organization.logo_link,
         "categories": organization.categories,
         "countries": organization.countries
     }
@@ -48,7 +47,6 @@ async def create_organization(organization: OrganizationAdd):
         id=object_id,
         name=organization.name,
         description=organization.description,
-        logo_link=organization.logo_link,
         link=organization.link,
         countries=organization.countries,
         categories=organization.categories
@@ -76,7 +74,6 @@ async def delete_organization(organization_id: str):
     return OrganizationGet(id=organization_id, name=organization_object["properties"]["name"],
                            link=organization_object["properties"]["link"],
                            description=organization_object["properties"]["description"],
-                           logo_link=organization_object["properties"]["logo_link"],
                            categories=organization_object["properties"]["categories"],
                            countries=organization_object["properties"]["countries"])
 
@@ -93,18 +90,17 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
     - OrganizationGet: The updated organization's details.
     """
 
-    validate_image(organization.logo_link)
 
     organization_object = {
         "name": organization.name,
         "link": organization.link,
         "description": organization.description,
-        "logo_link": organization.logo_link,
         "categories": organization.categories,
         "countries": organization.countries,
     }
 
 
+    validate_link(organization.link)
 
     result = client.data_object.replace(
         uuid=organization_id,
@@ -117,7 +113,6 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
         name=organization.name,
         link=organization.link,
         description=organization.description,
-        logo_link=organization.logo_link,
         categories=organization.categories,
         countries=organization.countries
     )
@@ -142,3 +137,12 @@ def validate_image(url: str):
 
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="An error occurred while fetching the image")
+
+def validate_link(url: str):
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=422, detail="The site on the link is not accessible")
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=422, detail="The provided link is invalid.")

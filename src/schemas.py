@@ -84,10 +84,6 @@ class_organization = {
             "dataType": ["text"]
         },
         {
-            "name": "logo_link",
-            "dataType": ["text"]
-        },
-        {
             "name": "link",
             "dataType": ["text"]
         },
@@ -112,10 +108,6 @@ class_news = {
         },
         {
             "name": "body",
-            "dataType": ["text"]
-        },
-        {
-            "name": "image_link",
             "dataType": ["text"]
         },
         {

@@ -24,7 +24,7 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
     query = (
         client.query.get(
             collection_name,
-            ["name", "body", "image_link", "source_link", "tags"]
+            ["name", "body", "source_link", "tags"]
         )
         .with_additional(["id"])
         .with_limit(batch_size)
@@ -33,6 +33,9 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
         result = query.with_after(cursor).do()
     else:
         result = query.do()
+    print("---------------------------------------")
+    print(result)
+    print("---------------------------------------")
     return result["data"]["Get"][collection_name]
 
 
@@ -52,7 +55,6 @@ def parse_news(data: List[Dict]) -> List[NewsGet]:
             id=item['_additional']['id'],
             name=item['name'],
             body=item['body'],
-            image_link=item['image_link'],
             source_link=item['source_link'],
             tags=item['tags'],
         )
@@ -100,7 +102,6 @@ async def get_news_article(news_id: str):
     )
     return NewsGet(id=news_article_object["id"], name=news_article_object["properties"]["name"],
                    body=news_article_object["properties"]["body"],
-                   image_link=news_article_object["properties"]["image_link"],
                    source_link=news_article_object["properties"]["source_link"],
                    tags=news_article_object["properties"]["tags"])
 
@@ -111,7 +112,7 @@ async def search_news(text: SearchInput):
         return await get_news()
     response = (
         client.query
-        .get("News", ["name", "body", "image_link", "source_link", "tags"])
+        .get("News", ["name", "body","source_link", "tags"])
         .with_bm25(
             query=text.searchString
         )
@@ -126,7 +127,6 @@ async def search_news(text: SearchInput):
             id=response["data"]["Get"]["News"][i]["_additional"]["id"],
             name=response["data"]["Get"]["News"][i]["name"],
             body=response["data"]["Get"]["News"][i]["body"],
-            image_link=response["data"]["Get"]["News"][i]["image_link"],
             source_link=response["data"]["Get"]["News"][i]["source_link"],
             tags=response["data"]["Get"]["News"][i]["tags"]
         ))

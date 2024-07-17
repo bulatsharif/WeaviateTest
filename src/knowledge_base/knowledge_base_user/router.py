@@ -145,8 +145,8 @@ async def search_article(text: SearchInput):
             )
             .with_near_text({
                 "concepts": [text.searchString],
-                "distance": max_distance
             })
+            .with_limit(3)
             .with_additional("id")
             .do()
         )

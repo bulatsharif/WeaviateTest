@@ -29,7 +29,6 @@ async def create_news_article(news_article: NewsAdd):
     news_article_object = {
         "name": news_article.name,
         "body": news_article.body,
-        "image_link": news_article.image_link,
         "source_link": news_article.source_link,
         "tags": news_article.tags
     }
@@ -37,7 +36,7 @@ async def create_news_article(news_article: NewsAdd):
     if len(news_article.tags) > 5:
         raise HTTPException(status_code=422, detail="No more than 5 tags allowed.")
 
-    validate_image(news_article.image_link)
+    validate_link(news_article.source_link)
 
     result = client.data_object.create(
         data_object=news_article_object,
@@ -50,7 +49,6 @@ async def create_news_article(news_article: NewsAdd):
         id=object_id,
         name=news_article.name,
         body=news_article.body,
-        image_link=news_article.image_link,
         source_link=news_article.source_link,
         tags=news_article.tags
     )
@@ -76,7 +74,7 @@ async def delete_news_article(news_article_id: str):
         class_name="News",
     )
     return NewsGet(id=news_article_id, name=news_article_object["properties"]["name"],
-                   body=news_article_object["properties"]["body"], image_link=news_article_object["properties"]["image_link"],
+                   body=news_article_object["properties"]["body"],
                    source_link=news_article_object["properties"]["source_link"],
                    tags=news_article_object["properties"]["tags"])
 
@@ -99,7 +97,6 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
     news_article_object = {
         "name": news_article.name,
         "body": news_article.body,
-        "image_link": news_article.image_link,
         "source_link": news_article.source_link,
         "tags": news_article.tags,
     }
@@ -107,7 +104,7 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
     if len(news_article.tags) > 5:
         raise HTTPException(status_code=422, detail="No more than 5 tags allowed.")
 
-    validate_image(news_article.image_link)
+    validate_link(news_article.source_link)
 
     result = client.data_object.replace(
         uuid=news_article_id,
@@ -119,7 +116,6 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
         id=news_article_id,
         name=news_article.name,
         body=news_article.body,
-        image_link=news_article.image_link,
         source_link=news_article.source_link,
         tags=news_article.tags
     )
@@ -144,3 +140,14 @@ def validate_image(url: str):
 
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="An error occurred while fetching the image")
+
+
+
+def validate_link(url: str):
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=422, detail="The site on the link is not accessible")
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=422, detail="The provided link is invalid.")

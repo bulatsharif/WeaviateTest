@@ -26,50 +26,28 @@ class_article = {
     }
 }
 
-class_fund = {
-    "class": "Fund",
+class_saved_article = {
+    "class": "ArticleSaved",
     "properties": [
-        {
-            "name": "name",
-            "dataType": ["text"]
-        },
-        {
-            "name": "link",
-            "dataType": ["text"]
-        },
-        {
-            "name": "logo_link",
-            "dataType": ["text"]
-        },
-        {
-            "name": "description",
-            "dataType": ["text"]
-        },
-    ],
-    "vectorizer": "none"
-}
-
-class_question = {
-    "class": "Question",
-    "properties": [
-        {
-            "name": "question",
-            "dataType": ["text"]
-        },
-        {
-            "name": "answer",
-            "dataType": ["text"]
-        },
         {
             "name": "tags",
             "dataType": ["text[]"]
         },
-    ],
-    "moduleConfig": {
-        "generative-mistral": {
-            "model": "mistral-medium-latest",
+        {
+            "name": "title",
+            "dataType": ["text"]
         },
-    }
+        {
+            "name": "text",
+            "dataType": ["text"]
+        },
+        {
+            "name": "content",
+            "dataType": ["text"],
+            "vectorizer": "none"
+        }
+    ],
+    "vectorizer": "none"
 }
 
 class_organization = {
@@ -99,8 +77,58 @@ class_organization = {
     "vectorizer": "none"
 }
 
+class_saved_organization = {
+    "class": "OrganizationSaved",
+    "properties": [
+        {
+            "name": "name",
+            "dataType": ["text"]
+        },
+        {
+            "name": "description",
+            "dataType": ["text"]
+        },
+        {
+            "name": "link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "categories",
+            "dataType": ["text[]"]
+        },
+        {
+            "name": "countries",
+            "dataType": ["text[]"]
+        },
+    ],
+    "vectorizer": "none"
+}
+
 class_news = {
     "class": "News",
+    "properties": [
+        {
+            "name": "name",
+            "dataType": ["text"]
+        },
+        {
+            "name": "body",
+            "dataType": ["text"]
+        },
+        {
+            "name": "source_link",
+            "dataType": ["text"]
+        },
+        {
+            "name": "tags",
+            "dataType": ["text[]"]
+        }
+    ],
+    "vectorizer": "none"
+}
+
+class_saved_news = {
+    "class": "SavedNews",
     "properties": [
         {
             "name": "name",

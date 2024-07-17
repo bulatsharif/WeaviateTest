@@ -1,3 +1,4 @@
+from src.knowledge_base.knowledge_base_user.router import get_article
 from src.knowledge_base.models import ArticleGet, ArticleAdd, Content, UserRequestGet
 from typing import List, Dict
 from src.weaviate_client import client
@@ -157,7 +158,7 @@ def parse_requests(data: List[Dict]) -> List[UserRequestGet]:
 
 
 @router.get("/get-requests", response_model=List[UserRequestGet], summary="Get a list of all user requests")
-async def get_articles():
+async def get_requests():
     """
     Retrieve a list of all user requests.
 
@@ -216,3 +217,38 @@ async def delete_request(request_id: str):
         class_name="Request",
     )
     return UserRequestGet(id=request_object["id"], requestText=request_object["properties"]["requestText"])
+
+
+@router.post("/unpublish/{article_id}", response_model=ArticleGet, summary="Unpublishes an article to saved")
+async def publish_article(article_id: str):
+    article = await get_article(article_id)
+
+    content_dict = article.content.dict()
+    content_json = json.dumps(content_dict)
+
+    article_object = {
+        "tags": article.tags,
+        "title": article.title,
+        "text": article.text,
+        "content": content_json
+    }
+
+    result = client.data_object.create(
+        data_object=article_object,
+        class_name="ArticleSaved"
+    )
+
+    object_id = result
+
+    client.data_object.delete(
+        article_id,
+        class_name="Article",
+    )
+
+    return ArticleGet(
+        id=object_id,
+        tags=article.tags,
+        title=article.title,
+        text=article.text,
+        content=article.content
+    )

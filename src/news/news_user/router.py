@@ -33,9 +33,6 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
         result = query.with_after(cursor).do()
     else:
         result = query.do()
-    print("---------------------------------------")
-    print(result)
-    print("---------------------------------------")
     return result["data"]["Get"][collection_name]
 
 

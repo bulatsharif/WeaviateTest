@@ -5,6 +5,7 @@ from PIL import Image
 from fastapi import APIRouter, HTTPException
 
 from src.news.models import NewsGet, NewsAdd
+from src.news.news_user.router import get_news_article
 from src.weaviate_client import client
 
 router = APIRouter(
@@ -141,7 +142,37 @@ def validate_image(url: str):
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="An error occurred while fetching the image")
 
+@router.post("/unpublish/{news_id}", response_model=NewsGet, summary="Unpublishes a news article to saved")
+async def unpublish_news(news_id: str):
 
+    news_article = await get_news_article(news_id)
+    news_article_object = {
+        "name": news_article.name,
+        "body": news_article.body,
+        "source_link": news_article.source_link,
+        "tags": news_article.tags
+    }
+
+    result = client.data_object.create(
+        data_object=news_article_object,
+        class_name="SavedNews"
+    )
+
+    object_id = result
+
+    client.data_object.delete(
+        news_id,
+        class_name="News",
+    )
+
+
+    return NewsGet(
+        id=object_id,
+        name=news_article.name,
+        body=news_article.body,
+        source_link=news_article.source_link,
+        tags=news_article.tags
+    )
 
 def validate_link(url: str):
     try:

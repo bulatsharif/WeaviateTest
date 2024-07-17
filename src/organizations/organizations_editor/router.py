@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 from fastapi import APIRouter, HTTPException
 from src.organizations.models import OrganizationAdd, OrganizationGet
+from src.organizations.organization_user.router import get_organization
 from src.weaviate_client import client
 
 router = APIRouter(
@@ -146,3 +147,40 @@ def validate_link(url: str):
 
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="The provided link is invalid.")
+
+
+@router.post("/unpublish/{organization_id}", response_model=OrganizationGet, summary="Unpublishes an organization to saved")
+async def unpublish_organization(organization_id: str):
+
+    organization = await get_organization(organization_id)
+
+
+    organization_object = {
+        "name": organization.name,
+        "link": organization.link,
+        "description": organization.description,
+        "categories": organization.categories,
+        "countries": organization.countries
+    }
+
+    result = client.data_object.create(
+        data_object=organization_object,
+        class_name="OrganizationSaved"
+    )
+
+    object_id = result
+
+    client.data_object.delete(
+        organization_id,
+        class_name="Organization",
+    )
+
+
+    return OrganizationGet(
+        id=object_id,
+        name=organization.name,
+        description=organization.description,
+        link=organization.link,
+        countries=organization.countries,
+        categories=organization.categories
+    )

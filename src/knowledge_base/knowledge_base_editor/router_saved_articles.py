@@ -207,14 +207,25 @@ async def edit_article(article: ArticleAdd, article_id: str):
         content=article.content
     )
 
-
 @router.post("/publish/{saved_article_id}", response_model=ArticleGet, summary="Publishes a saved article")
-async def unpublish_article(saved_article_id: str):
+async def publish_article(saved_article_id: str):
+    """
+    Publish a saved article by moving it from the 'ArticleSaved' collection to the 'Article' collection.
+
+    Parameters:
+    - saved_article_id (str): The ID of the saved article to be published.
+
+    Returns:
+    - ArticleGet: The details of the published article.
+    """
+    # Retrieve the details of the saved article by its ID
     article = await get_saved_article(saved_article_id)
 
+    # Convert the content of the article to JSON format
     content_dict = article.content.dict()
     content_json = json.dumps(content_dict)
 
+    # Create an object representation of the article
     article_object = {
         "tags": article.tags,
         "title": article.title,
@@ -222,18 +233,22 @@ async def unpublish_article(saved_article_id: str):
         "content": content_json
     }
 
+    # Create the article in the published articles collection
     result = client.data_object.create(
         data_object=article_object,
         class_name="Article"
     )
 
+    # Get the ID of the newly created published article
     object_id = result
 
+    # Delete the article from the saved articles collection
     client.data_object.delete(
         saved_article_id,
         class_name="ArticleSaved",
     )
 
+    # Return the details of the published article
     return ArticleGet(
         id=object_id,
         tags=article.tags,
@@ -241,3 +256,4 @@ async def unpublish_article(saved_article_id: str):
         text=article.text,
         content=article.content
     )
+

@@ -218,14 +218,25 @@ async def delete_request(request_id: str):
     )
     return UserRequestGet(id=request_object["id"], requestText=request_object["properties"]["requestText"])
 
-
 @router.post("/unpublish/{article_id}", response_model=ArticleGet, summary="Unpublishes an article to saved")
-async def publish_article(article_id: str):
+async def unpublish_article(article_id: str):
+    """
+    Unpublish an article and move it to the saved articles collection.
+
+    Parameters:
+    - article_id (str): The ID of the article to be unpublished.
+
+    Returns:
+    - ArticleGet: The details of the unpublished article now saved in the saved articles collection.
+    """
+    # Retrieve the details of the article by its ID
     article = await get_article(article_id)
 
+    # Convert the content of the article to JSON format
     content_dict = article.content.dict()
     content_json = json.dumps(content_dict)
 
+    # Create an object representation of the article
     article_object = {
         "tags": article.tags,
         "title": article.title,
@@ -233,18 +244,22 @@ async def publish_article(article_id: str):
         "content": content_json
     }
 
+    # Create the article in the saved articles collection
     result = client.data_object.create(
         data_object=article_object,
         class_name="ArticleSaved"
     )
 
+    # Get the ID of the newly created saved article
     object_id = result
 
+    # Delete the article from the published articles collection
     client.data_object.delete(
         article_id,
         class_name="Article",
     )
 
+    # Return the details of the unpublished article
     return ArticleGet(
         id=object_id,
         tags=article.tags,

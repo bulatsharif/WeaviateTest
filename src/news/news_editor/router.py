@@ -121,31 +121,21 @@ async def edit_news_article(news_article: NewsAdd, news_article_id: str):
         tags=news_article.tags
     )
 
-def validate_image(url: str):
-    try:
-        response = requests.get(url)
-        if response.status_code != 200:
-            raise HTTPException(status_code=422, detail="Image URL is not accessible")
-
-        content_type = response.headers.get('Content-Type')
-        if not content_type or not content_type.startswith('image/'):
-            raise HTTPException(status_code=422, detail="URL does not point to an image")
-
-        try:
-            image = Image.open(BytesIO(response.content))
-            image.verify()
-        except (IOError, SyntaxError) as e:
-            raise HTTPException(status_code=422, detail="Image data is corrupted")
-
-        return {"message": "Image is valid"}
-
-    except requests.RequestException as e:
-        raise HTTPException(status_code=422, detail="An error occurred while fetching the image")
-
 @router.post("/unpublish/{news_id}", response_model=NewsGet, summary="Unpublishes a news article to saved")
 async def unpublish_news(news_id: str):
+    """
+    Unpublish a news article and move it to the saved news collection.
 
+    Parameters:
+    - news_id (str): The ID of the news article to be unpublished.
+
+    Returns:
+    - NewsGet: The details of the unpublished news article now saved in the saved news collection.
+    """
+    # Retrieve the details of the news article by its ID
     news_article = await get_news_article(news_id)
+
+    # Create an object representation of the news article
     news_article_object = {
         "name": news_article.name,
         "body": news_article.body,
@@ -153,19 +143,22 @@ async def unpublish_news(news_id: str):
         "tags": news_article.tags
     }
 
+    # Create the news article in the saved news collection
     result = client.data_object.create(
         data_object=news_article_object,
         class_name="SavedNews"
     )
 
+    # Get the ID of the newly created saved news article
     object_id = result
 
+    # Delete the news article from the published news collection
     client.data_object.delete(
         news_id,
         class_name="News",
     )
 
-
+    # Return the details of the unpublished news article
     return NewsGet(
         id=object_id,
         name=news_article.name,
@@ -174,11 +167,20 @@ async def unpublish_news(news_id: str):
         tags=news_article.tags
     )
 
+
 def validate_link(url: str):
+    """
+    Validate the provided URL to ensure it is accessible.
+
+    Parameters:
+    - url (str): The URL to validate.
+
+    Raises:
+    - HTTPException: If the URL is not accessible or is invalid.
+    """
     try:
         response = requests.get(url)
         if response.status_code != 200:
             raise HTTPException(status_code=422, detail="The site on the link is not accessible")
-
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="The provided link is invalid.")

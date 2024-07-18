@@ -5,6 +5,7 @@ from src.organizations.models import OrganizationAdd
 from src.organizations.models import OrganizationGet
 from src.weaviate_client import client
 
+# Create a router for the API endpoints related to saved organizations
 router = APIRouter(
     prefix="/saved-organization",
     tags=["Organizations Editor Saved Organizations"]
@@ -102,7 +103,6 @@ async def get_saved_organization(organization_id: str):
                            categories=organization_object["properties"]["categories"],
                            countries=organization_object["properties"]["countries"])
 
-
 @router.post("/create-saved-organization/", response_model=OrganizationGet, summary="Create a new saved organization")
 async def create_saved_organization(organization: OrganizationAdd):
     """
@@ -117,9 +117,7 @@ async def create_saved_organization(organization: OrganizationAdd):
     Raises:
     - HTTPException: If the logo link format is invalid.
     """
-
     validate_link(organization.link)
-
 
     organization_object = {
         "name": organization.name,
@@ -145,7 +143,7 @@ async def create_saved_organization(organization: OrganizationAdd):
         categories=organization.categories
     )
 
-@router.delete("/delete-saved-organization/{organization_id}", response_model=OrganizationGet, summary="Delete an saved organization")
+@router.delete("/delete-saved-organization/{organization_id}", response_model=OrganizationGet, summary="Delete a saved organization")
 async def delete_saved_organization(organization_id: str):
     """
     Delete an existing organization by its ID.
@@ -170,7 +168,7 @@ async def delete_saved_organization(organization_id: str):
                            categories=organization_object["properties"]["categories"],
                            countries=organization_object["properties"]["countries"])
 
-@router.put("/edit-saved-organization/{organization_id}", response_model=OrganizationGet, summary="Edit an saved organization")
+@router.put("/edit-saved-organization/{organization_id}", response_model=OrganizationGet, summary="Edit a saved organization")
 async def edit_organization(organization: OrganizationAdd, organization_id: str):
     """
     Edit an existing organization by its ID.
@@ -182,8 +180,6 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
     Returns:
     - OrganizationGet: The updated organization's details.
     """
-
-
     organization_object = {
         "name": organization.name,
         "link": organization.link,
@@ -191,7 +187,6 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
         "categories": organization.categories,
         "countries": organization.countries,
     }
-
 
     validate_link(organization.link)
 
@@ -210,13 +205,18 @@ async def edit_organization(organization: OrganizationAdd, organization_id: str)
         countries=organization.countries
     )
 
-
-
-@router.post("/publish/{saved_organization_id}", response_model=OrganizationGet, summary="Publishes a saved organization")
+@router.post("/publish/{saved_organization_id}", response_model=OrganizationGet, summary="Publish a saved organization")
 async def publish_organization(saved_organization_id: str):
+    """
+    Publish a saved organization by moving it from 'OrganizationSaved' to 'Organization'.
 
+    Parameters:
+    - saved_organization_id (str): The ID of the saved organization to be published.
+
+    Returns:
+    - OrganizationGet: The published organization's details.
+    """
     organization = await get_saved_organization(saved_organization_id)
-
 
     organization_object = {
         "name": organization.name,
@@ -238,7 +238,6 @@ async def publish_organization(saved_organization_id: str):
         class_name="OrganizationSaved",
     )
 
-
     return OrganizationGet(
         id=object_id,
         name=organization.name,
@@ -248,12 +247,19 @@ async def publish_organization(saved_organization_id: str):
         categories=organization.categories
     )
 
-
 def validate_link(url: str):
+    """
+    Validate the provided URL to ensure it is accessible.
+
+    Parameters:
+    - url (str): The URL to validate.
+
+    Raises:
+    - HTTPException: If the URL is not accessible or is invalid.
+    """
     try:
         response = requests.get(url)
         if response.status_code != 200:
             raise HTTPException(status_code=422, detail="The site on the link is not accessible")
-
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="The provided link is invalid.")

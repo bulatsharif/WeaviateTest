@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 from src.news.models import NewsGet, NewsAdd
 from src.weaviate_client import client
 
+# Create a router for the API endpoints related to saved news articles
 router = APIRouter(
     prefix="/saved-news",
     tags=["News Editor Saved News"]
@@ -39,7 +40,6 @@ def get_batch_with_cursor(collection_name: str, batch_size: int, cursor: str = N
         result = query.do()
     return result["data"]["Get"][collection_name]
 
-
 def parse_news(data: List[Dict]) -> List[NewsGet]:
     """
     Parse a list of objects into a list of NewsGet models.
@@ -61,7 +61,6 @@ def parse_news(data: List[Dict]) -> List[NewsGet]:
         )
         news.append(one_news)
     return news
-
 
 @router.get("/get-saved-news", response_model=List[NewsGet], summary="Get all saved news articles")
 async def get_news():
@@ -85,7 +84,6 @@ async def get_news():
     news_output = parse_news(news_unformatted)
     return news_output
 
-
 @router.get("/get-saved-news/{news_id}", response_model=NewsGet, summary="Get a specific saved news article by ID")
 async def get_news_article(news_id: str):
     """
@@ -105,7 +103,6 @@ async def get_news_article(news_id: str):
                    body=news_article_object["properties"]["body"],
                    source_link=news_article_object["properties"]["source_link"],
                    tags=news_article_object["properties"]["tags"])
-
 
 @router.post("/create-saved_news_article/", response_model=NewsGet, summary="Create a saved news article")
 async def create_saved_news_article(news_article: NewsAdd):
@@ -148,7 +145,6 @@ async def create_saved_news_article(news_article: NewsAdd):
         tags=news_article.tags
     )
 
-
 @router.delete("/delete-saved-news-article/{news_article_id}", response_model=NewsGet, summary="Delete a saved news article")
 async def delete_news_article(news_article_id: str):
     """
@@ -172,7 +168,6 @@ async def delete_news_article(news_article_id: str):
                    body=news_article_object["properties"]["body"],
                    source_link=news_article_object["properties"]["source_link"],
                    tags=news_article_object["properties"]["tags"])
-
 
 @router.put("/edit-saved-news-article/{news_article_id}", response_model=NewsGet, summary="Edit a saved news article")
 async def edit_saved_news_article(news_article: NewsAdd, news_article_id: str):
@@ -215,12 +210,18 @@ async def edit_saved_news_article(news_article: NewsAdd, news_article_id: str):
         tags=news_article.tags
     )
 
-
-@router.post("/publish/{saved_news_id}", response_model=NewsGet, summary="Publishes a saved news")
+@router.post("/publish/{saved_news_id}", response_model=NewsGet, summary="Publish a saved news article")
 async def publish_news(saved_news_id: str):
+    """
+    Publish a saved news article by moving it from 'SavedNews' to 'News'.
 
+    Parameters:
+    - saved_news_id (str): The ID of the saved news article to be published.
+
+    Returns:
+    - NewsGet: The published news article's details.
+    """
     news_article = await get_news_article(saved_news_id)
-
 
     news_article_object = {
         "name": news_article.name,
@@ -241,7 +242,6 @@ async def publish_news(saved_news_id: str):
         class_name="SavedNews",
     )
 
-
     return NewsGet(
         id=object_id,
         name=news_article.name,
@@ -251,10 +251,18 @@ async def publish_news(saved_news_id: str):
     )
 
 def validate_link(url: str):
+    """
+    Validate the provided URL to ensure it is accessible.
+
+    Parameters:
+    - url (str): The URL to validate.
+
+    Raises:
+    - HTTPException: If the URL is not accessible or is invalid.
+    """
     try:
         response = requests.get(url)
         if response.status_code != 200:
             raise HTTPException(status_code=422, detail="The site on the link is not accessible")
-
     except requests.RequestException as e:
         raise HTTPException(status_code=422, detail="The provided link is invalid.")

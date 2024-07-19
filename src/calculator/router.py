@@ -41,11 +41,11 @@ async def calculate_zakat_on_property(property: ZakatOnProperty):
     for item in property.cash_on_bank_cards or []:
         savings_value += await handle_conversion(item, property.currency)
 
-    if property.silver_jewelry:
-        savings_value += await handle_silver(property.silver_jewelry, fetch_silver_value, property.currency)
+    for item in property.silver_jewelry or []:
+        savings_value += await handle_silver(item, fetch_silver_value, property.currency)
 
-    if property.gold_jewelry:
-        savings_value += await handle_gold(property.gold_jewelry, fetch_gold_value, property.currency)
+    for item in property.gold_jewelry or []:
+        savings_value += await handle_gold(item,  fetch_gold_value, property.currency)
 
     for item in property.purchased_product_for_resaling or []:
         savings_value += await handle_conversion(item, property.currency)

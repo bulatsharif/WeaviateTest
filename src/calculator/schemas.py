@@ -21,8 +21,8 @@ class ZakatOnPropertyGold(BaseModel):
 class ZakatOnProperty(BaseModel):
     cash: Optional[List[ZakatOnPropertyItem]]
     cash_on_bank_cards: Optional[List[ZakatOnPropertyItem]]
-    silver_jewelry: Optional[ZakatOnPropertySilver]
-    gold_jewelry: Optional[ZakatOnPropertyGold]
+    silver_jewelry: Optional[List[ZakatOnPropertySilver]]
+    gold_jewelry: Optional[List[ZakatOnPropertyGold]]
     purchased_product_for_resaling: Optional[List[ZakatOnPropertyItem]]
     unfinished_product: Optional[List[ZakatOnPropertyItem]]
     produced_product_for_resaling: Optional[List[ZakatOnPropertyItem]]

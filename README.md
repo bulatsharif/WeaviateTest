@@ -41,7 +41,7 @@ To introduce yourself with the basics of Weaviate, you can learn go to the Weavi
 
 - **Cloning Repository**: The next step is to clone the repository into the working directory. This can be proceeded as follows:
   ```bash
-    git clone https://github.com/bulatsharif/innopolis_cpp_summer_2024.git
+      git clone https://github.com/bulatsharif/WeaviateTest.git  
   ```
 
 - **API Keys**: The project uses several API's that is used both in calculations and in the vector database. To deploy the project succesfully you have to obtain API keys at:

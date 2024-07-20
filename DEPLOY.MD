@@ -79,7 +79,7 @@ Enter the following:
 ```@bash
 server { 
 	listen 80; 
-	server_name 10.90.137.169; 
+	server_name 10.90.137.169; # REPLACE IT WITH YOUR IP
 
 	root /var/www/zakatsecond/web; 
 	index index.html; 
@@ -92,6 +92,7 @@ server {
 Press ctrl+x, then Y to save, then enter
 Now perform these commands:
 ```@bash
+sudo ln -s /etc/nginx/sites-available/flutter_app /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx`
 ```
@@ -109,7 +110,7 @@ Now  you can to the ip address and check out the application: http://10.90.137.1
   
 - **Cloning Repository**: The next step is to clone the repository into the working directory. This can be proceeded as follows:  
  ```  
-   git clone https://github.com/bulatsharif/innopolis_cpp_summer_2024.git  
+   git clone https://github.com/bulatsharif/WeaviateTest.git  
  ```  
 - **API Keys**: The project uses several API's that is used both in calculations and in the vector database. To deploy the project succesfully you have to obtain API keys at:  
   - [Mistal AI API](https://mistral.ai/)  
@@ -127,6 +128,14 @@ In case of the server, you have to firstly obtain the IP of the server:
  METAL_PRICE_API_KEY=555666777111333bbbb333xxxx 
  HOST=http://weaviate:8080
   ```  
+**How to define environment variables?**
+You can do that by going to the directory with the backend. In my case it is WeaviateTest
+```
+cd WeaviateTest
+touch .env
+nano .env
+```
+Enter the values, press ctrl+x, then y, then enter. Now you  have set them.
  - **Running Docker**: After completion of steps above, you can finally run the site by running Docker Container:  
   ```  
    docker compose up  
@@ -184,7 +193,7 @@ Enter following:
 ```
 server {
     listen 80;
-    server_name 10.90.137.169; # your ip server
+    server_name 10.90.137.169; # REPLACE IT WITH YOUR IP
 
     location /app1/ {
         alias /var/www/zakatsecond/web/;
@@ -221,8 +230,8 @@ sudo systemctl restart nginx
 ```
 
 Now you can access the main app at:
-http://10.90.137.169/app1
+http://10.90.137.169/app1/
 And editor at:
-http://10.90.137.169/app2
+http://10.90.137.169/app2/
 And swagger at:
 http://10.90.137.169:8000/docs

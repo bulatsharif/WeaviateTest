@@ -94,7 +94,7 @@ Now perform these commands:
 ```@bash
 sudo ln -s /etc/nginx/sites-available/flutter_app /etc/nginx/sites-enabled/
 sudo nginx -t
-sudo systemctl restart nginx`
+sudo systemctl restart nginx
 ```
 Now  you can to the ip address and check out the application: http://10.90.137.169
 
@@ -146,7 +146,7 @@ Enter the values, press ctrl+x, then y, then enter. Now you  have set them.
 The beginning deployment of flutter application was an warmup :3
 Now you need to delete the existing configuration
 ```@bash
-sudo rm /etc/nginx/sites-enabled/flutter_app`
+sudo rm /etc/nginx/sites-enabled/flutter_app
 ```
 At this moment you should already have zakatcalcteam55 folder. Creator another folder, could be named editor
 ```

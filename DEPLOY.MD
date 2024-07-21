@@ -1,7 +1,17 @@
 # Deploy
 
 ### Before deployment
-For the purpose of the example or just fast deploy you can go as it is by this guide (until like 30.07.2024 or earlier since our hosting will die). In the flutter application all requests will be send to our existing backend service that is deployed on render and yandex cloud. If you want to test out on your own, in the main application: go through all files with ctrl+f and search stirng "https://weaviatetest.onrender.com" and replace all of it with "http://YOUR_SERVER_IP:8000" (you should modify all BaseUrl variaibles). In the editor application you can just go on lib/services/ and comfortly changes all links only here. 
+For the purpose of the example or just fast deploy you can go as it is by this guide (until like 30.07.2024 or earlier since our hosting will die). In the flutter application all requests will be send to our existing backend service that is deployed on render and yandex cloud. If you want to test out on your own, in the main application: go through all files with ctrl+f and search stirng "https://weaviatetest.onrender.com" and replace all of it with "http://YOUR_SERVER_IP:8000" (you should modify all BaseUrl variaibles). In the editor application you can just go on lib/services/ and comfortly changes all links only here. Here is the list of files that need to be changed in main application(swap urls):
+```
+lib/ui/pages/knowledge_base/json_item.dart
+lib/ui/pages/knowledge_base/kb_main_frame.dart
+lib/ui/pages/knowledge_base/send_request.dart
+lib/ui/pages/livestock/zakat_livestock?screen_2.dart.dart
+lib/ui/pages/organizations/json_organization.dart
+lib/ui/pages/property/newproperty_screen.dart
+lib/ui/pages/home_page.dart
+lib/ui/widgets/dynamic_table_ushr.dart
+```
 
 ### Building flutter main application
 To build the flutter application, you have to follow the guides at the [Flutter site](https://docs.flutter.dev/get-started/install/windows/desktop) to install flutter on your machine.
@@ -23,6 +33,7 @@ cd flutter_app
 flutter config --enable-web
 flutter build web
 ```
+If there was no "compiling web..." then enter the last command "flutter build web" again
 
 ### Preparing server
 Now you have to login to your server via ssh or other methods.
@@ -131,6 +142,7 @@ In case of the server, you have to firstly obtain the IP of the server:
  METAL_PRICE_API_KEY=555666777111333bbbb333xxxx 
  HOST=http://weaviate:8080
   ```  
+If afterwards you get the error "Weaviate did not startup", try to define the host variable as "http://weaviate:8080"
 **How to define environment variables?**
 You can do that by going to the directory with the backend. In my case it is WeaviateTest
 ```
@@ -145,13 +157,19 @@ Enter the values, press ctrl+x, then y, then enter. Now you  have set them.
  ```
  - **Accesing the swagger**: After succesfully running the Docker Container, you can open the swagger at the: "http://your_ip:8000/docs#/"
 
+Also you can see the main application connected to the backend if you restart the nginx
+```
+sudo systemctl restart nginx
+
+```
+
 ### Editor application
 The beginning deployment of flutter application was an warmup :3
 Now you need to delete the existing configuration
 ```@bash
 sudo rm /etc/nginx/sites-enabled/flutter_app
 ```
-At this moment you should already have zakatcalcteam55 folder. Creator another folder, could be named editor
+At this moment you should already have zakatcalcteam55 folder. Creator another folder on your machine, could be named editor
 ```
 mkdir editor
 cd editor
@@ -167,7 +185,7 @@ cd editor
 flutter config --enable-web
 flutter build web
 ```
-If there is some error, try to put these commands in random order and perform, and try to go out one folder up (to main editor folder) and also play with the commands. Eventually your build will be created.
+If there is some error , try to enter "flutter build web" again.
 As above, copy the path to the directory
 ```
 C:\Users\username\Desktop\editor\editor

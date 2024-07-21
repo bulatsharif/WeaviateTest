@@ -1,5 +1,8 @@
 # Deploy
 
+### Before deployment
+For the purpose of the example or just fast deploy you can go as it is by this guide (until like 30.07.2024 or earlier since our hosting will die). In the flutter application all requests will be send to our existing backend service that is deployed on render and yandex cloud. If you want to test out on your own, in the main application: go through all files with ctrl+f and search stirng "https://weaviatetest.onrender.com" and replace all of it with "http://YOUR_SERVER_IP:8000" (you should modify all BaseUrl variaibles). In the editor application you can just go on lib/services/ and comfortly changes all links only here. 
+
 ### Building flutter main application
 To build the flutter application, you have to follow the guides at the [Flutter site](https://docs.flutter.dev/get-started/install/windows/desktop) to install flutter on your machine.
 Go to the "Install the Flutter SDK" header and choose "Download and install" instead of "Use VS code to install". Follow the guidelines.
